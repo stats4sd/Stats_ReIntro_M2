@@ -57,7 +57,7 @@ Whale %>%
 
 In this second workbook, we are going to be taking a closer look at sampling and estimation.
  
-Samping consists of selecting some part of a population to observe, so one may estimate something about the whole population. For example, to estimate the amount of lichen available as food for caribou, a biologists collects lichen from selected small plots within the study area. Based on the dry weight of the sample collected, the available amount of food for the whole region can be estimated. Similarly, to estimate the average weight of the individuals of a bird species, some individuals are captured, weighted (and released) and based on these measurements, the average weight of the individuals can be estimated.
+Sampling consists of selecting some part of a population to observe, so one may estimate something about the whole population. For example, to estimate the amount of lichen available as food for caribou, a biologists collects lichen from selected small plots within the study area. Based on the dry weight of the sample collected, the available amount of food for the whole region can be estimated. Similarly, to estimate the average weight of the individuals of a bird species, some individuals are captured, weighted (and released) and based on these measurements, the average weight of the individuals can be estimated.
 
 Sampling is the process used to collect the data, estimation uses the sampled data to provide an estimate of a population parameter using such data.   
 
@@ -226,7 +226,7 @@ Designing a sample using a scientific approach can help to minimise sampling err
 
 Sampling methods can be categorised into two very broad classes on the basis of how the sample was selected: probabilistic and non-probabilistic sampling. 
 
-In a probabilistic sampling scheme, every element in the population has aknown, non-zero probability of being included in the sample. A non-probabilistic sampling plan doesn't have this feature.
+In a probabilistic sampling scheme, every element in the population has a known, non-zero probability of being included in the sample. A non-probabilistic sampling plan doesn't have this feature.
 
 In probabilistic sampling, because every element has a known chance of being selected, we can obtain unbiased estimates of the population characteristics of interest, and we can also know their precision. 
 
@@ -275,7 +275,7 @@ We, therefore, would like to know how precise our estimate is, how close it is t
 
 -   *margin of error* (usually used for proportions)
 
--   *confidence interval* (used by both: mens, variances and proportions).
+-   *confidence interval* (used by both: means, variances and proportions).
 
 All of them are related, so if you know one of them you can easily obtain the other two. For example, the margin of error is calculated as: Margin of error = 2 × standard error. We will discuss the confidence interval in the next sub-section.
 
@@ -394,6 +394,7 @@ Let's assume that the 23550 whales reported in the dataset are the population of
   sliderInput("n_sample",label = "Sample Size",min = 5,max=500,value = 50,step = 5)
  sliderInput("conf_level",label = "Confidence Level",min = 0.5,max=0.999,value = 0.95,step = 0.001)
   actionButton("go2","Make New Sample!")
+  selectInput("type",label="Plot Type",choices = c("violin","errorbar"))
   gt_output("table1")
     plotOutput("ci_plot")
 
@@ -435,7 +436,8 @@ output$table1<-render_gt({
 output$ci_plot<-renderPlot({
  if(!is.null(whale_sample$sample)){
 
-  whale_sample$sample %>%
+   if(input$type=="violin"){
+ p1<- whale_sample$sample %>%
   summarise("Mean"=mean(length.m.),"SD"=sd(length.m.),"SE"=sd(length.m.)/sqrt(n())) %>%
      ggplot(aes(x=1,y=Mean,ymax=Mean+qnorm(1-((1-as.numeric(input$conf_level))/2))*SE,
                 ymin=Mean-qnorm(1-((1-as.numeric(input$conf_level))/2))*SE))+
@@ -448,7 +450,23 @@ output$ci_plot<-renderPlot({
        scale_x_continuous(breaks=1:2,labels=c("Sample","Data"))+
           ggtitle(paste0(whale_sample$label," samples\n",scales::percent(input$conf_level,0.1)," Confidence Level"))+
     theme(axis.text = element_text(size=16),title=element_text(size=20))
-   
+   }
+     if(input$type=="errorbar"){
+   whale_sample$sample %>%
+  summarise("Mean"=mean(length.m.),"SD"=sd(length.m.),"SE"=sd(length.m.)/sqrt(n())) ->plt_dt
+       
+       p1<-  ggplot(plt_dt,aes(x=1,y=Mean,ymax=Mean+qnorm(1-((1-as.numeric(input$conf_level))/2))*SE,
+                ymin=Mean-qnorm(1-((1-as.numeric(input$conf_level))/2))*SE))+
+         geom_point()+
+     geom_errorbar(width=0.05)+
+     scale_y_continuous(limits=c(min(c(plt_dt$Mean-qnorm(1-((1-as.numeric(input$conf_level))/2))*plt_dt$SE,10)),
+                                 max(c(plt_dt$Mean+qnorm(1-((1-as.numeric(input$conf_level))/2))*plt_dt$SE,17))))+
+          annotate(geom="point",y=mean(Whale$length.m.),x=2, size=4,col="red")+
+          scale_x_continuous(breaks=1:2,labels=c("Sample","Data"))+
+          ggtitle(paste0(whale_sample$label," samples\n",scales::percent(input$conf_level,0.1)," Confidence Level"))+
+    theme(axis.text = element_text(size=16),title=element_text(size=20))
+     }
+   p1
  }
 })
 
@@ -468,6 +486,7 @@ Now, let's observe what happens with the 95% Confidence intervals. You can gener
 ```{r sample_ui2, context="render",echo=FALSE}
 
   sliderInput("n_sample2",label = "Sample Size",min = 5,max=500,value = 50,step = 5)
+ sliderInput("conf_level2",label = "Confidence Level",min = 0.5,max=0.999,value = 0.95,step = 0.001)
   actionButton("add","Add New Sample!")
     actionButton("reset","Reset")
  
@@ -504,15 +523,17 @@ output$cumulative_ci_plot<-renderPlot({
    whale_sample2$sample %>%
      map_df(function(x)slice(Whale,x) %>% summarise(mean=mean(length.m.),n=n(),se=sd(length.m.)/sqrt(n()))) %>%
      mutate(sample=1:n())%>%
-     mutate(colour=!(((mean + 1.96*se)<whale_summary2$Mean) |((mean - 1.96*se)>whale_summary2$Mean)) )->samples
+     mutate(colour=!(((mean + qnorm(1-((1-as.numeric(input$conf_level2))/2))*se)<whale_summary2$Mean) |
+                       ((mean - qnorm(1-((1-as.numeric(input$conf_level2))/2))*se)>whale_summary2$Mean)) )->samples
      
    p1<-p1+
      geom_point(data=samples,
                    aes(y=mean,x=sample,colour=colour))+
      geom_errorbar(data=samples,
-                   aes(y=mean,x=sample,ymax=mean+1.96*se,ymin=mean-1.96*se,colour=colour),inherit.aes = FALSE)+
-     scale_y_continuous(limits=c(min(samples$mean)-2.5*max(samples$se),
-                                 max(samples$mean)+2.5*max(samples$se)))+
+                   aes(y=mean,x=sample,ymax=mean+qnorm(1-((1-as.numeric(input$conf_level2))/2))*se,
+                       ymin=mean-qnorm(1-((1-as.numeric(input$conf_level2))/2))*se,colour=colour),inherit.aes = FALSE)+
+     scale_y_continuous(limits=c(min(samples$mean)-3.5*max(samples$se),
+                                 max(samples$mean)+3.5*max(samples$se)))+
      scale_color_manual(values=c("FALSE"="red","TRUE"="black"))+
      ggtitle("95% Confidence Intervals")+
      theme_light()+
@@ -528,7 +549,7 @@ output$cumulative_ci_plot<-renderPlot({
 
 As the sample size grows, again, the 95% confidence interval will get narrower. For example, if you generate a sample of size n=50 and generate the 95% Confidence interval and then generate a new sample of size n=4*50=200, the width of the new sample 95% Confidence interval will be a half of the first one, as the with of the Confidence interval is proportional to 1/sqrt(n).
 
-95% of the 95% Confidence intervals, or 19 out of 20, should include the population mean, that is represented byt the horizontal line in the plot. If you keep generating samples and their corresponding 95% CI long enough, you will find that one Confidence Interval does not include the population mean. to identify it easily it is red instead of the usual black. This is a probabilistic statement, so it may happen in your first sample or may not happen until you have generated 30 samples, but in the long run, the proportion of 95% confidence intervals that do not include the population mean will be around 5% or one out of 20. And this will happen no matter how large is your sample size. Sample size affects the precision of the estimate, the width of the 95% confidence interval, but, by its definition, the 95% Confidence interval will contain the true population value for 95% of the random samples.
+95% of the 95% Confidence intervals, or 19 out of 20, should include the population mean, that is represented by the horizontal line in the plot. If you keep generating samples and their corresponding 95% CI long enough, you will find that one Confidence Interval does not include the population mean. to identify it easily it is red instead of the usual black. This is a probabilistic statement, so it may happen in your first sample or may not happen until you have generated 30 samples, but in the long run, the proportion of 95% confidence intervals that do not include the population mean will be around 5% or one out of 20. And this will happen no matter how large is your sample size. Sample size affects the precision of the estimate, the width of the 95% confidence interval, but, by its definition, the 95% Confidence interval will contain the true population value for 95% of the random samples.
 
 
 ## Sampling strategies in environmental sciences
