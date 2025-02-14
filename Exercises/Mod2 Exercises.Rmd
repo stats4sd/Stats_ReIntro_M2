@@ -1,0 +1,92 @@
+---
+title: "Module 2 - Sampling and Estimation Exercises"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(learnr)
+library(tidyverse)
+library(gt)
+```
+
+In this set of exercises there are a few multiple choice questions, to check you have followed the key messages from this module, and then a final question which requires some more thought. We will discuss the final question in this weeks webinar - please note down through any major challenges you can think of in this process, either linked to the scenario described or ones which you have faced, or know that you may face in the future, when conducting sampling processes and we can talk through these problems during the session.
+
+
+## Question 1
+
+```{r}
+data.frame(Sex="Male",Percentage="60.0%","95% Confidence Interval"="[55.0%, 65.0%]",check.names = FALSE) %>%
+  gt()
+```
+
+The table above shows some results looking at the the percentage of male whales from a sample of 400 whales, that we can consider is a representative and random sample of our population of interest of all whales of a particular species.
+
+```{r q1}
+  question("60% of whales within our population are male",
+    answer("True",message = "We could say either '60% of wales within our sample are male' or 'the estimated percentage of male whales in our population is 60%'. But unless we conducted a census we do not know exactly the percentage of male whales in the whole population, so we cannot claim this statement to be true."),
+    answer("False", correct = TRUE,message = "We could say either '60% of wales within our sample are male' or 'the estimated percentage of male whales in our population is 60%'. But unless we conducted a census we do not know exactly the percentage of male whales in the whole population, so we cannot claim this statement to be true."))
+```
+
+```{r q2}
+  question("Using the same sample, a 99% Confidence Interval would be narrower than the 95% Confidence Interval",
+    answer("True",message = "With the same sample, the 99% CI is always wider than the 95% CI, as you in order to be 'more confident' that your CI includes the true value of the population, you need to include a wider range of values"),
+    answer("False", correct = TRUE,message = "With the same sample, the 99% CI is always wider than the 95% CI, as you in order to be 'more confident' that your CI includes the true value of the population, you need to include a wider range of values"))
+```
+
+
+```{r q3}
+  question("There is a chance that the proportion of male whales is less than 55% or more than 65%",
+    answer("True", correct = TRUE,message = "If it is a truly random sample then the change would be 5%, since it is a 95% CI"),
+    answer("False",message = "If it is a truly random sample then the change would be 5%, since it is a 95% CI"))
+```
+
+```{r q4}
+  question("The width of the Confidence Interval is a measure of the precision of my estimate?",
+    answer("True", correct = TRUE,message = "Confidence intervals are a measure of precision; not of variability or bias"),
+    answer("False",message = "Confidence intervals are a measure of precision; not of variability or bias"))
+```
+
+
+## Question 2
+
+
+```{r q5}
+  question("Which of the following factors affect the width of a 95% confidence interval around the estimate of the population mean?",
+    answer("The variability in the data", correct = TRUE,"The variability in the data will be linked to the variability in the population so there is not much that can be done to reduce the impact of this variability on the confidence interval. There are some clever sampling schemes that can try to efficiently make estimates from parameters with extremely high variance (e.g. stratified sampling) under certain contexts to improve levels of precision.\n"),
+    answer("The sample size", correct = TRUE,message = "The sample size is something we can control - a higher sample size will increase the level of rpecision, and reduce the width of the confidence interval\n"),
+    answer("Whether the sample is representative of the population", correct = FALSE,message = "A non-representative sample will introduce bias into the estimate, but will not impact upon the precision\n"),
+    answer("The number of different variables being collected", correct = FALSE,message = "The number of variables collected will not have an impact on the confidence interval\n"),
+        answer("Whether the variable is normally distributed", correct = FALSE,message = "Under the central limit theorem then the distribution of the underlying variable does not matter, only the variance. When distributions are extremely skewed the mean may not be the most relevant estimate of central tendency, but it will always  be possible to calculate values for the mean and associated confidence intervals.\n"),
+    answer("The measurement error in the tools used to collect data", correct = FALSE,message = "Confidence intervals are only able to account for sampling error, not measurement error\n"),random_answer_order = TRUE,allow_retry=TRUE)
+```
+
+## Question 3
+A research study will assess the impacts of environmental contamination (heavy metals, POPs…etc) on wildlife along the Kobuk river system, Alaska. The study will involve environmental sampling of the system, as well as wildlife sampling of species thought to be affected, especially salmon. The researcher will then be looking for links between pollutants and effects on wildlife health and on the ecosystem. 
+```{r}
+question("Answer the following questions regarding the sampling process you would use",
+         answer("the most appropriate sampling method will be Transect sampling", correct = FALSE,message = "The transect is a line that cuts through the landscape, here we have a river system, with affluents, so the transect method is not suitable/n"),
+         answer("If we suspect that the river system can be divided into parts that are more homogeneous, a stratified sampling would be advised", correct = TRUE,message = "Stratified sampling subdivides the population into homogeneous subgroups and uses a probabilistic sampling method to sample within each stratum/n"),
+         answer("Random sampling strategies without stratification may produce clusters of sites in parts of the country and leave some areas unsampled.", correct = TRUE,message = "If we don't want this to happen, we should divide the river basin in strata/n"),
+         answer("we will obtain more precise estimates for a given total sample size if we sample in fewer places and measure more salmons than if we samples in more places and measure fewer salmons", correct = FALSE,message = "the design effect (DEFF) is the inflation of the standard error of the estimate when we use a probabilistic sampling method other than Simple Random Sampling. the DEFF is smaller if we sample in more places and take fewer measurements in each place than the opposite, because in the same place units tend to be more similar (so smaller variability) than for the overall population/n"),
+         answer("Stratification can be performed according to a geographical area (e.g. squares or catchment boundaries), a river type or stream orders.  It all depends on your specific reasons for introducing a stratum in your sample. ", correct = TRUE,message = "All these, and possibly others, are possible strata/n"),
+         random_answer_order = FALSE,allow_retry=TRUE)
+```
+
+
+## Question 4
+
+The best way to gain understanding of a sampling and estimation method is to carry it out on some real population of interest to you. In the process of carrying out the sampling process and obtaining the estimates, think about or discuss with others the following
+
+a- What practical problems arise in establishing a frame, such as a map or a list of units, from which to select a sample
+
+b- how would you carry out the sample selection?
+
+c- What special problems arise in observing the units selected?
+
+d- How would you estimate the population characteristics of interest (mean? proportion? ...)
+
+e- How would you estimate the precision of your estimate?
+
+f- Can you think of any way of improving your procedure?

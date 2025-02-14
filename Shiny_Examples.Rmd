@@ -1,0 +1,186 @@
+---
+title: "Long vs Wide Data"
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+    df_print: paged
+runtime: shiny_prerendered
+description: >
+  Learn about the basics of reshaping your data in R
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+library(tidyverse)
+library(shiny)
+library(gt)
+
+Whale<-read.csv("Data/Humpback.csv") %>% filter(length.m.>0)
+```
+
+
+```{r dice_ui, context="render",echo=FALSE}
+
+  sliderInput("n_dice",label = "Number of dice rolls",min = 0,max=1000,value = 10,step = 5)
+  actionButton("go","Roll Dice!")
+  plotOutput("plot_results")
+
+```
+
+
+
+```{r dice_server,context="server"}
+
+ dice<-reactiveValues(value=NULL)
+
+  observeEvent(input$go,{
+ dice$value<-data.frame(roll=sample(1:6, size= as.numeric(input$n_dice), replace=TRUE))
+  })
+
+output$plot_results<-renderPlot({
+ if(!is.null(dice$value)){
+ggplot(dice$value,aes(x=roll))+
+    geom_bar()+
+      ggtitle(paste("Mean Value =",round(mean(dice$value$roll),2)))+
+   scale_x_continuous(labels=1:6,breaks=1:6,limits=c(0.5,6.5))+
+    theme(axis.text = element_text(size=16),title=element_text(size=20))
+}
+})
+
+
+```
+
+
+
+
+```{r sample_ui, context="render",echo=FALSE}
+
+  sliderInput("n_sample",label = "Sample Size",min = 5,max=500,value = 50,step = 5)
+ sliderInput("conf_level",label = "Confidence Level",min = 0.5,max=0.999,value = 0.95,step = 0.001)
+  actionButton("go2","Make New Sample!")
+  gt_output("table1")
+    plotOutput("ci_plot")
+
+```
+
+
+```{r, sample_server,context="server"}
+
+ whale_sample<-reactiveValues(sample=NULL)
+
+whale_summary<-Whale %>%
+  summarise("Mean Length"=mean(length.m.),"SD Length"=sd(length.m.),"SE Length"=sd(length.m.)/sqrt(n()),
+            "% Male"=scales::percent(mean(sex=="Male"),0.1)) %>%
+  mutate(Sample="Complete Data")
+
+
+  observeEvent(input$go2,{
+ whale_sample$sample<-slice_sample(Whale,n = as.numeric(input$n_sample),replace=FALSE)
+ whale_sample$label<-as.numeric(input$n_sample)
+  })
+
+output$table1<-render_gt({
+ if(!is.null(whale_sample$sample)){
+
+  (whale_sample$sample %>%
+  summarise("Mean Length"=mean(length.m.),"SD Length"=sd(length.m.),"SE Length"=sd(length.m.)/sqrt(n()),
+            "% Male"=scales::percent(mean(sex=="Male"),0.1)) %>%
+  mutate(Sample=paste0("Random Sample (n=", whale_sample$label,")"))) %>%
+     full_join(whale_summary) %>%
+     gt() %>%
+     fmt_number()
+
+   
+   
+}
+})
+
+
+output$ci_plot<-renderPlot({
+ if(!is.null(whale_sample$sample)){
+
+  whale_sample$sample %>%
+  summarise("Mean"=mean(length.m.),"SD"=sd(length.m.),"SE"=sd(length.m.)/sqrt(n())) %>%
+     ggplot(aes(x=1,y=Mean,ymax=Mean+qnorm(1-((1-as.numeric(input$conf_level))/2))*SE,
+                ymin=Mean-qnorm(1-((1-as.numeric(input$conf_level))/2))*SE))+
+       geom_violin(data=whale_sample$sample,aes(x=1,y=length.m.),inherit.aes=FALSE)+
+         geom_point()+
+     geom_errorbar(width=0.05)+
+     geom_violin(data=Whale,aes(y=length.m.,x=2),inherit.aes=FALSE,col="red")+
+          annotate(geom="point",y=mean(Whale$length.m.),x=2, size=4,col="red")+
+     scale_y_continuous(limits=c(5,20))+
+       scale_x_continuous(breaks=1:2,labels=c("Sample","Data"))+
+          ggtitle(paste0(whale_sample$label," samples\n",scales::percent(input$conf_level,0.1)," Confidence Level"))+
+    theme(axis.text = element_text(size=16),title=element_text(size=20))
+   
+ }
+})
+
+```
+
+
+
+
+
+```{r sample_ui2, context="render",echo=FALSE}
+
+  sliderInput("n_sample2",label = "Sample Size",min = 5,max=500,value = 50,step = 5)
+  actionButton("add","Add New Sample!")
+    actionButton("reset","Reset")
+ 
+    plotOutput("cumulative_ci_plot")
+
+```
+
+
+```{r, sample_server2,context="server"}
+
+ whale_sample2<-reactiveValues(sample=list())
+
+observeEvent(input$reset,{
+  whale_sample2$sample<-list()
+})
+
+whale_summary2<-Whale %>%
+  summarise("Mean"=mean(length.m.))
+
+
+  observeEvent(input$add,{
+ whale_sample2$sample<-append(whale_sample2$sample,
+                             list(sample(1:nrow(Whale),size =  as.numeric(input$n_sample2),replace=FALSE)))
+  })
+
+output$cumulative_ci_plot<-renderPlot({
+  
+  p1<-ggplot(whale_summary2)+
+    geom_hline(aes(yintercept=Mean),col="blue")
+  
+ if(length(whale_sample2$sample)>0){
+
+   
+   whale_sample2$sample %>%
+     map_df(function(x)slice(Whale,x) %>% summarise(mean=mean(length.m.),n=n(),se=sd(length.m.)/sqrt(n()))) %>%
+     mutate(sample=1:n())%>%
+     mutate(colour=!(((mean + 1.96*se)<whale_summary2$Mean) |((mean - 1.96*se)>whale_summary2$Mean)) )->samples
+     
+   p1<-p1+
+     geom_point(data=samples,
+                   aes(y=mean,x=sample,colour=colour))+
+     geom_errorbar(data=samples,
+                   aes(y=mean,x=sample,ymax=mean+1.96*se,ymin=mean-1.96*se,colour=colour),inherit.aes = FALSE)+
+     scale_y_continuous(limits=c(min(samples$mean)-2.5*max(samples$se),
+                                 max(samples$mean)+2.5*max(samples$se)))+
+     scale_color_manual(values=c("FALSE"="red","TRUE"="black"))+
+     ggtitle("95% Confidence Intervals")+
+     theme_light()+
+     labs(colour="Includes true value?")
+   
+ }
+  print(p1)
+   
+ 
+})
+
+```

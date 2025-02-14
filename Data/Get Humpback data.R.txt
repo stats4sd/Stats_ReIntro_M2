@@ -1,0 +1,24 @@
+library(tidyverse)
+library(openxlsx)
+
+whale <- read.xlsx("Data/occurrence.xlsx",
+                  sheet = "occurrence")
+
+whale2 <- read.xlsx("Data/extendedmeasurementorfact.xlsx",
+                  sheet = "extendedmeasurementorfact")
+
+whale_data<-inner_join(whale, whale2, by="id")
+
+whale_data$sex<-as.factor(whale_data$sex)
+whale_data$vernacularName<-as.factor(whale_data$vernacularName)
+
+whale_data1<-select(whale_data, c(1,2,7,8,15,16,24,30,48:53,60,63,65,68))
+
+Humpback<-whale_data1 %>% 
+  filter(vernacularName =="Humpback")%>% 
+  droplevels()
+
+Humpback$length<-Humpback$measurementValue
+Humpback<-select(Humpback,-c(measurementType,measurementValue))
+
+write.csv(Humpback,"Data/Humpback.csv")
