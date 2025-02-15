@@ -96,7 +96,7 @@ output$plot_results2<-renderPlot({
   if(dice2$i>0){
 
   
-p1<-ggplot( dice2$value,aes(x=mean,y=sixes,colour=n,shape=type))+
+p1<-ggplot( dice2$value,aes(x=mean,y=sixes,fill=n,shape=type))+
 annotate(geom="point",x=3.5,y=1/6,col="red",size=10)+
   annotate(geom="point",x=3.5,y=1/6,col="red",size=30,shape=1)+
     annotate(geom="point",x=3.5,y=1/6,col="red",size=60,shape=1)+
@@ -104,8 +104,9 @@ annotate(geom="point",x=3.5,y=1/6,col="red",size=10)+
   geom_point(size=5)+
   scale_y_continuous(limits=c(0,0.5),labels=scales::percent)+
   scale_x_continuous(limits=c(2,5))+
-  scale_color_distiller(palette="Spectral",limits=c(1,1000))+
+  scale_fill_distiller(palette="BuGn",limits=c(1,1000))+
   theme_light()+
+  scale_shape_manual(values=c(21,22))+
     theme(axis.text = element_text(size=16),title=element_text(size=20))+
   labs(x="Mean",y="% Sixes")
   }else{
@@ -116,7 +117,8 @@ annotate(geom="point",x=3.5,y=1/6,col="red",size=10)+
     annotate(geom="point",x=3.5,y=1/6,col="red",size=100,shape=1)+
   scale_y_continuous(limits=c(0,0.5),labels=scales::percent)+
   scale_x_continuous(limits=c(2,5)) +
-  scale_color_distiller(palette="Spectral",limits=c(1,1000))+
+    scale_shape_manual(values=c(21,22))+
+  scale_fill_distiller(palette="BuGn",limits=c(1,1000))+
     theme_light()+
     theme(axis.text = element_text(size=16),title=element_text(size=20))+
   labs(x="Mean",y="% Sixes")
