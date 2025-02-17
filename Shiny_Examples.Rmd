@@ -21,6 +21,7 @@ Whale<-read.csv("Data/Humpback.csv") %>% filter(length.m.>0)
 ```
 
 
+
 ```{r dice_ui, context="render",echo=FALSE}
 
   sliderInput("n_dice",label = "Number of dice rolls",min = 0,max=1000,value = 10,step = 5)
@@ -51,6 +52,100 @@ ggplot(dice$value,aes(x=roll))+
 
 
 ```
+
+
+
+
+```{r dice_ui2, context="render",echo=FALSE}
+
+  sliderInput("n_dice2",label = "Number of dice rolls",min = 0,max=1000,value = 10,step = 5)
+ selectInput("fair",label = "Select Dice Type",choices=c("Fair","Unfair (2 Sixes)"="Unfair"))
+  
+  actionButton("go_x","Roll Dice!")
+  actionButton("reset2","Start over")
+  plotOutput("plot_results2")
+
+```
+
+
+
+```{r dice_server2,context="server"}
+
+ dice2<-reactiveValues(value=data.frame(type=NULL,mean=NULL,n=NULL,sixes=NULL),i=0)
+
+observeEvent(input$reset2,{
+  dice2$value<-data.frame(type=NULL,mean=NULL,n=NULL,sixes=NULL)
+  dice2$i<-0
+})
+
+  observeEvent(input$go_x,{
+   if(input$fair=="Fair"){probs<-rep(1,6)}
+    else{probs<-c(1,1,1,0,1,2)}
+  
+   d1<-data.frame(type=input$fair,roll=sample(1:6, size= as.numeric(input$n_dice2),
+                                    prob= probs, replace=TRUE)) %>%
+     group_by(type) %>%
+      summarise(mean=mean(roll),n=n(),sixes=mean(roll==6))
+    
+ dice2$value<-rbind(dice2$value,d1)
+ dice2$i<-dice2$i+1
+
+ 
+  })
+
+output$plot_results2<-renderPlot({
+  if(dice2$i>0){
+
+  
+p1<-ggplot( dice2$value,aes(x=mean,y=sixes,fill=n,shape=type))+
+annotate(geom="point",x=3.5,y=1/6,col="red",size=10)+
+  annotate(geom="point",x=3.5,y=1/6,col="red",size=30,shape=1)+
+    annotate(geom="point",x=3.5,y=1/6,col="red",size=60,shape=1)+
+    annotate(geom="point",x=3.5,y=1/6,col="red",size=100,shape=1)+
+  geom_point(size=5)+
+  scale_y_continuous(limits=c(0,0.5),labels=scales::percent)+
+  scale_x_continuous(limits=c(2,5))+
+  scale_fill_distiller(palette="BuGn",limits=c(1,1000))+
+  theme_light()+
+  scale_shape_manual(values=c(21,22))+
+    theme(axis.text = element_text(size=16),title=element_text(size=20))+
+  labs(x="Mean",y="% Sixes")
+  }else{
+p1<- ggplot( dice2$value)+
+annotate(geom="point",x=3.5,y=1/6,col="red",size=10)+
+  annotate(geom="point",x=3.5,y=1/6,col="red",size=30,shape=1)+
+    annotate(geom="point",x=3.5,y=1/6,col="red",size=60,shape=1)+
+    annotate(geom="point",x=3.5,y=1/6,col="red",size=100,shape=1)+
+  scale_y_continuous(limits=c(0,0.5),labels=scales::percent)+
+  scale_x_continuous(limits=c(2,5)) +
+    scale_shape_manual(values=c(21,22))+
+  scale_fill_distiller(palette="BuGn",limits=c(1,1000))+
+    theme_light()+
+    theme(axis.text = element_text(size=16),title=element_text(size=20))+
+  labs(x="Mean",y="% Sixes")
+}
+p1
+})
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
