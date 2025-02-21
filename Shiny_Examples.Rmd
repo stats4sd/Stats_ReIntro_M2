@@ -1,5 +1,5 @@
 ---
-title: "Long vs Wide Data"
+title: "Examples of Sampling & Estimation"
 output: 
   learnr::tutorial:
     progressive: true
@@ -7,7 +7,7 @@ output:
     df_print: paged
 runtime: shiny_prerendered
 description: >
-  Learn about the basics of reshaping your data in R
+  Examples of Sampling & Estimation
 ---
 
 ```{r setup, include=FALSE}
@@ -80,7 +80,7 @@ observeEvent(input$reset2,{
 
   observeEvent(input$go_x,{
    if(input$fair=="Fair"){probs<-rep(1,6)}
-    else{probs<-c(1,1,1,0,1,2)}
+    else{probs<-c(1,1,0,1,1,2)}
   
    d1<-data.frame(type=input$fair,roll=sample(1:6, size= as.numeric(input$n_dice2),
                                     prob= probs, replace=TRUE)) %>%

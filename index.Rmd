@@ -57,13 +57,12 @@ Whale %>%
 
 In this second workbook, we are going to be taking a closer look at sampling and estimation.
  
-Sampling consists of selecting some part of a population to observe, so one may estimate something about the whole population. For example, to estimate the amount of lichen available as food for caribou, a biologists collects lichen from selected small plots within the study area. Based on the dry weight of the sample collected, the available amount of food for the whole region can be estimated. Similarly, to estimate the average weight of the individuals of a bird species, some individuals are captured, weighted (and released) and based on these measurements, the average weight of the individuals can be estimated.
+Sampling consists of selecting some part of a population to observe, so one may estimate something about the whole population, or infer and test hypothesis about the population characteristics, or fit models that explain or predict some population outcome. In this workbook we are going to discuss some general ideas about sampling and their relationship to estimation. In Workbook 3 we are going to discuss inference and hypothesis testing and in Module 4 and 5 model fitting.
+As an example of sampling for estimation, in order to estimate the amount of lichen available as food for caribou, a biologists collects lichen from selected small plots within the study area. Based on the dry weight of the sample collected, the available amount of food for the whole region can be estimated. Similarly, to estimate the average weight of the individuals of a bird species, some individuals are captured, weighted (and released) and based on these measurements, the average weight of the individuals can be estimated.
 
 Sampling is the process used to collect the data, estimation uses the sampled data to provide an estimate of a population parameter using such data.   
 
 In this session we will cover:
-
--   The definitions of Population and Sample
 
 -   A brief description of some of the most used types of sampling units in environmental sciences
 
@@ -75,7 +74,7 @@ In this session we will cover:
 
 -   Finally, we will review some of the most commons sampling strategies used in environmental sciences.
 
-In these workbooks all output produced will come from the use of R, and all of the code used in the workbooks can be found on GitHub here: [CHANGE GITHUB REPOSITORY] <https://github.com/stats4sd/Stats_ReIntro_M1>. But the principles are identical regardless of which data analysis tool is being used.Whichever tool is being used for data analysis - it will require that the user is familiar enough with it to be able to generate any sort of summary or plot or transformation that they might suddenly think could be useful!
+In these workbooks all output produced will come from the use of R, and all of the code used in the workbooks can be found on GitHub here: [CHANGE GITHUB REPOSITORY] <https://github.com/stats4sd/Stats_ReIntro_M2>. But the principles are identical regardless of which data analysis tool is being used.Whichever tool is being used for data analysis - it will require that the user is familiar enough with it to be able to generate any sort of summary or plot or transformation that they might suddenly think could be useful!
 
 ## Data being used in this workbook
 In this session we are going to use a public dataset produced by the Ocean Biodiversity Information system (OBIS). It contains the Historic whale catch records from Australian whaling stations (1925-1978). The full data set and other details can be found here <https://obis.org/dataset/43e4c2cc-5886-427f-a4a9-d47d2635d246>. It contains 38267 records, but we will use a subset: the data corresponding to the most common caught whale, the Humpback (Megaptera novaeangliae). 
@@ -93,7 +92,8 @@ In statistics the term “population” has a slightly different meaning from th
 
 we call *Population* the entire group of individuals to which findings of the study are to be extrapolated. 
 The individual members of the population whose characteristics are to be measured are the *units* of the population.
-the units can be, basically, anything: people, individual birds of a given species, ground plots, plants, individuals of an animal species, households, hospitals, schools or business. The population must be fully defined so that those to be included and excluded are clearly spelt out (inclusion and exclusion criteria).
+The units can be, basically, anything: people, individual birds of a given species, ground plots, plants, individuals of an animal species, households, hospitals, schools or business. Examples of characteristics that we can measure in populations are the proportion of male/female, or the proportion of given subspecies (proportion of Humpback whales among the population of whales), or the average height or diameter in trees or the average length of the population of Humpback whales.
+The population must be fully defined so that those to be included and excluded are clearly spelt out (inclusion and exclusion criteria). There is, however, a trade-off between stricter conditions for inclusion – which may reduce variability in the population but decrease the generalisability of the results. For example, we can define our population of whales as all whales in the world, or just Humpback whales, or female Humpback whales, or female Humpback whales in the Australia shores, or ... We can define a population as the trees of a given species in a single area of a forest, or in the whole forest, or across a region of a country, or in the whole country, or .... The less strict the inclusion criteria, the larger the variability, the stricter the criteria, the more homogeneous the populaton will be, but also the smaller the population we can make generalisations from our sample. 
 
 Although a researcher should clearly define the population he or she is dealing with, they may not be able to enumerate it exactly. For instance, in ordinary usage the population of England denotes the number of people within England’s boundaries, perhaps as enumerated at a census. But people die and are born continuously, some people may leave the country whereas others may come from abroad to live in. Defining the population is not always straightforward.
 
@@ -101,11 +101,12 @@ Although a researcher should clearly define the population he or she is dealing 
 
 Although we would like to know the value of certain characteristics of the population, we can't measure all the units, because of time and budget constrains, but also because sometimes the process of measurement affects, even kills or destroys, the unit, and therefore we are not supposed to do this for the whole population. Think of the lichen example above, if we collected all the lichen in an area and dry it, we would have none left! Or if we wanted to study the lead content in the liver of Salmon, we will have to kill all the salmon to obtain the results!
 
-Therefore, we usually select a subset (the *Sample*) from the original population and observe/measure all the units in it, and use this to get an *Estimate* of the population value. A well chosen sample will contain most of the information about a particular population characteristic. 
+Therefore, we usually select a subset (the *Sample*) from the original population and observe/measure all the units in it, and use this to get an *Estimate* of the population value or answer questions about the population value. A well chosen sample will contain most of the information about a particular population characteristic. 
 
 ### Sampling Units
 
-With many populations, it is straightforward to identify the types of units to be sampled and conceive a list or *frame* of the units in the population, regardless the practical problems of obtaining the frame or observing the selected sample.A complete list of the units in the target population would provide and ideal frame from which the sample units could be selected. In practice, it is often difficult to obtain a list that corresponds exactly to the population of interest.
+With many populations, it is straightforward to identify the types of units to be sampled and conceive a list or *frame* of the units in the population, regardless the practical problems of obtaining the frame or observing the selected sample. A complete list of the units in the target population would provide and ideal frame from which the sample units could be selected. The Humpback whale dataset is this sampling frame, as it contains the list of all possible whales we will consider in our study. 
+In practice, it is often difficult to obtain a list that corresponds exactly to the population of interest.
 
 With many other populations, it is not so clear what the units should be. For example, in a survey of a natural resource or agricultural crop in a region, the region may be divided into a set of geographic units ("plots" or "segments") and a sample of units may be selected using a map. However, one is free to choose alternative sizes and shapes of units, and such choices may affect the cost of the survey and the precision of the estimates.
 
@@ -161,7 +162,7 @@ Once you select below the number of dices, N, you will obtain a new random sampl
 We will use the new sample mean as the new population mean estimate and the proportion of "2" in the sample as the estimate of the probability of obtaining a "2".
 By generating repeated samples you will observe that they are probably not equal to the expected average (3.5) but a value that sometimes is greater than 3.5 and sometimes smaller than 3.5, with the occasional result equal to 3.5. This highlights the idea of an unbiased estimate, as it is targeting (with some error) the true population value of 3.5, and the idea of precision, as the estimate will rarely be the actual population value, and we can observe how far is from it. 
 
-Now, let's change the sample size, for example n=100 or n=1000. You will observe how the sample mean is closer to the true value 3.5 than it was for smaller sampler sizes, and the larger the sample size, the smaller the differences between sample mean (the estimate) and population mean. The same happens with the proportion of "2", the larger the sample size, the closer it is to 16.67%. 
+Now, let's change the sample size, for example n=100 or n=1000. You will observe how the sample mean still varies each time, but deviates less from the true value of 3.5. The same happens with the proportion of "2", the larger the sample size, the closer it is to 16.67%. 
 
 ```{r dice_ui, context="render",echo=FALSE}
 
@@ -194,6 +195,85 @@ ggplot(dice$value,aes(x=roll))+
 
 The beauty of using simulations is that you already know what you should obtain, and therefore you can compare the results of your simulation with the expected result.
 
+What happens if you roll an unfair dice, one that has 2 sixes, and therefore one of the values one to five is no longer in the dice? If the population average result is 3.5 for fair dices, it will be different for this unfair dice. The proportion of sixes with a fair dice will be 1/6=16.67%, this will change now with the unfair dice. Roll it a few times and see what happens. Can you guess which value was removed to introduce the second six? 
+You can also observe how the precision increases as the sample size increases.
+
+```{r dice_ui2, context="render",echo=FALSE}
+
+  sliderInput("n_dice2",label = "Number of dice rolls",min = 0,max=1000,value = 10,step = 5)
+ selectInput("fair",label = "Select Dice Type",choices=c("Fair","Unfair (2 Sixes)"="Unfair"))
+  
+  actionButton("go_x","Roll Dice!")
+  actionButton("reset2","Start over")
+  plotOutput("plot_results2")
+
+```
+
+
+
+```{r dice_server2,context="server"}
+
+ dice2<-reactiveValues(value=data.frame(type=NULL,mean=NULL,n=NULL,sixes=NULL),i=0)
+
+observeEvent(input$reset2,{
+  dice2$value<-data.frame(type=NULL,mean=NULL,n=NULL,sixes=NULL)
+  dice2$i<-0
+})
+
+  observeEvent(input$go_x,{
+   if(input$fair=="Fair"){probs<-rep(1,6)}
+    else{probs<-c(1,1,0,1,1,2)}
+  
+   d1<-data.frame(type=input$fair,roll=sample(1:6, size= as.numeric(input$n_dice2),
+                                    prob= probs, replace=TRUE)) %>%
+     group_by(type) %>%
+      summarise(mean=mean(roll),n=n(),sixes=mean(roll==6))
+    
+ dice2$value<-rbind(dice2$value,d1)
+ dice2$i<-dice2$i+1
+
+ 
+  })
+
+output$plot_results2<-renderPlot({
+  if(dice2$i>0){
+
+  
+p1<-ggplot( dice2$value,aes(x=mean,y=sixes,fill=n,shape=type))+
+annotate(geom="point",x=3.5,y=1/6,col="red",size=10)+
+  annotate(geom="point",x=3.5,y=1/6,col="red",size=30,shape=1)+
+    annotate(geom="point",x=3.5,y=1/6,col="red",size=60,shape=1)+
+    annotate(geom="point",x=3.5,y=1/6,col="red",size=100,shape=1)+
+  geom_point(size=5)+
+  scale_y_continuous(limits=c(0,0.5),labels=scales::percent)+
+  scale_x_continuous(limits=c(2,5))+
+  scale_fill_distiller(palette="BuGn",limits=c(1,1000))+
+  theme_light()+
+  scale_shape_manual(values=c(21,22))+
+    theme(axis.text = element_text(size=16),title=element_text(size=20))+
+  labs(x="Mean",y="% Sixes")
+  }else{
+p1<- ggplot( dice2$value)+
+annotate(geom="point",x=3.5,y=1/6,col="red",size=10)+
+  annotate(geom="point",x=3.5,y=1/6,col="red",size=30,shape=1)+
+    annotate(geom="point",x=3.5,y=1/6,col="red",size=60,shape=1)+
+    annotate(geom="point",x=3.5,y=1/6,col="red",size=100,shape=1)+
+  scale_y_continuous(limits=c(0,0.5),labels=scales::percent)+
+  scale_x_continuous(limits=c(2,5)) +
+    scale_shape_manual(values=c(21,22))+
+  scale_fill_distiller(palette="BuGn",limits=c(1,1000))+
+    theme_light()+
+    theme(axis.text = element_text(size=16),title=element_text(size=20))+
+  labs(x="Mean",y="% Sixes")
+}
+p1
+})
+
+
+```
+
+You may have observed that the expected mean for the unfair dice is 4 or very close to 4. This tells us that the number that was removed from the dice to include the second six was the three.
+
 
 ## Sampling and non-sampling errors
 One sample is selected at random but other potential samples could have been selected, which may have produced different results. The difference between a statistic derived from a sample and the (unknown) population value is caused by what are known as the sampling and non-sampling errors. These errors are inevitable and, despite its name, "error", it doesn't mean necessarily that we have done something wrong or made a mistake. 
@@ -204,9 +284,12 @@ The non-sampling errors come from all other fronts:
 
 -   the sample is not representative, for example in a fish survey some selected sites may not be observed due to rough weather conditions; sites farthest from shore are the most typical to have such weather problems, 
 
--   not measuring all the sample units, for example a non-response in a survey or an animal or plant that dies
+-   not measuring all the sample units, for example a non-response in a survey or an animal or plant that dies.
 
--   measuring the characteristic with measurement or recording error
+-   measuring the characteristic with measurement or recording error. For example, in the Humpback dataset, there are 31 whales with length = 0, or misrecording a whale with actual length = 12.79m as 17.29m.
+
+-   when dealing with humans, response bias is a source of non-sampling errors. It happens when a number of different conditions or factors may cue respondents to provide inaccurate or false answers during surveys or interviews. For example, a professor is asking their students whether they have ever cheated on exams in his class, the participants are not likely to respond truthfully; instead their responses are biased toward responses that are expected from them.
+
 
 The non-sampling affect the accuracy of the estimates, and are the cause of bias.
 
@@ -222,7 +305,7 @@ Non-sampling errors are unavoidable, but they can be reduced being careful durin
 
 Designing a sample using a scientific approach can help to minimise sampling error and create estimates that are precise and unbiased.
 
-## Probability and non-probability sampling
+## Probabilistic and non-probabilistic sampling
 
 Sampling methods can be categorised into two very broad classes on the basis of how the sample was selected: probabilistic and non-probabilistic sampling. 
 
@@ -249,7 +332,7 @@ In the previous sections we have seen what happens when we take several samples 
 
 Simple Random Sampling (SRS) is the probabilistic sampling design in which every unit in the population has exactly the same probability to be selected. It is the most efficient sampling design, as it provides the most precise estimates of the population characteristic for a given sample size, and these estimates are unbiased.
 
-The winning numbers of the lotto, the result of rolling a dice or tossing a coin are examples of simple random sampling, as we know beforehand that all the possible outcomes have exactly the same probability.  
+The winning numbers of the lotto, the result of rolling a dice or tossing a coin are examples of simple random sampling, as we know beforehand that all the possible outcomes have exactly the same probability.we can extract a Simple Random Sample of whales from our dataset by allocating the same probability to be selected to each whale. 
 
 Unfortunately, not always it is possible to use this sampling plan We will discuss later, in the *Sampling strategies in environmental sciences* section, other options when SRS is not possible or economically inefficient.
 
@@ -277,13 +360,11 @@ We, therefore, would like to know how precise our estimate is, how close it is t
 
 -   *confidence interval* (used by both: means, variances and proportions).
 
-All of them are related, so if you know one of them you can easily obtain the other two. For example, the margin of error is calculated as: Margin of error = 2 × standard error. We will discuss the confidence interval in the next sub-section.
+All of them are related, so if you know one of them you can easily obtain the other two. For example, a possible margin of error is calculated as: Margin of error = 2 × standard error. We will discuss the confidence interval in the next sub-section.
 
 note that we use the term *error* to measure the degree of precision/uncertainty in or estimates.
 
 If we obtain *k* samples of *n* units each from the same population, and compute the mean of each sample, we will have *k* estimates of the population mean (and the same applies for the variance or the proportion, when applicable), as their means will vary from one sample to another. Like the series of observations in each sample, the sample of *k* sample means has a standard deviation. The standard error of the mean of one sample is an estimate of the standard deviation that would be obtained from the means of a large number of samples drawn from that population.
-
- *CENTRAL LIMIT THEOREM AND DISTRIBUTION OF THE SAMPLE MEAN?*
  
 One of the interesting characteristics of the three precision/uncertainty measures above is that they depend on the sample size *n*. Specifically, they are a function of *1/sqrt(n)* where *n* is the sample size. Therefore, the larger the sample size, the more reduced will the uncertainty measures of the estimates be. However, the gain in precision is big when we increase a small sample by one unit, but this gain will decrease as the sample size increases. 
 
@@ -313,7 +394,9 @@ For small populations, and small here means up to some hundreds, a correction ap
 
 The width of the interval depends on the actual precision of the estimate and the confidence level used. A greater standard error will result in a wider interval; and the wider the interval, the less precise the estimate will be.
 
-A 95% confidence level is frequently used. This means that if we drew 20 random samples and calculated a 95% confidence interval for the mean for each sample using the data in that sample, we would expect that, on average, 19 out of the 20 (95%) resulting confidence intervals would contain the true (and unknown) population value and 1 in 20 (5%) would not. So, most of the time, but not always. If we increased the confidence level to 99%, wider intervals would be obtained to increase the probability to include the true value, and only one out of 100 times we will get a confidence interval does not include the true value.
+A 95% confidence level is by far the most commonly used. However, it is possible to calculate the CI at any given level of confidence, such as 90% or 99%. But why 95%? It was set by the father of modern statistics himself, Sir Ronald Fisher. In 1925, Fisher picked 95% because the distance from the center of the Confidence Interval and the upper or lower limit is almost 2 times (1.96 times, to be precise) the standard error of the estimate. This threshold has since persisted for almost a century. It is a good compromise between being almost sure (95%) that it includes the population value, and not being so extremely wide that it wouldn't be useful for estimation purposes.
+
+For a confidence level of 95%, if we drew 20 random samples and calculated a 95% confidence interval for the mean for each sample using the data in that sample, we would expect that, on average, 19 out of the 20 (95%) resulting confidence intervals would contain the true (and unknown) population value and 1 in 20 (5%) would not. So, most of the time, but not always. If we increased the confidence level to 99%, wider intervals would be obtained to increase the probability to include the true value, and only one out of 100 times we will get a confidence interval does not include the true value.
 
 To calculate confidence intervals around an estimate we use the standard error (or the margin of error) for that estimate. The estimate and its 95% confidence interval are presented as: the estimate plus or minus the margin of error.
 The lower and upper 95% confidence limits are given by the sample estimate plus or minus 2 standard errors.
@@ -476,9 +559,6 @@ You can also change the sample size. By increasing it, the sample estimates will
 
 You can also change the confidence level. If you increase it from 95% to, say, 99%, you will observe how the confidence interval gets wider, and if you set the confidence level at 90%, the confidence interval will get narrower.
 
-*[SAM, THE ci DOESN'T CHANGE MUCH, NOT SURE IT DOES, BUT IF IT DOES IT IS REALLY DIFFICULT TO SEE THE CHANGE]*
-*[MAYBE WE COULD ADD THIS POSSIBILITY, BEEN ABLE TO CHANGE THE CONFIDENCE LEVEL IN THE NEXT INTERACTIVE PLOT, WHERE THE CHANGES I'M SURE WILL BE EASY TO SPOT]*
-
 
 Now, let's observe what happens with the 95% Confidence intervals. You can generate, by a Simple Random Sampling process, samples of size *n* from the population of whales. For each sample, the 95% Confidence interval will be generate and, until you reset, the confidence intervals are accumulated in the plot.
 
@@ -551,6 +631,10 @@ As the sample size grows, again, the 95% confidence interval will get narrower. 
 
 95% of the 95% Confidence intervals, or 19 out of 20, should include the population mean, that is represented by the horizontal line in the plot. If you keep generating samples and their corresponding 95% CI long enough, you will find that one Confidence Interval does not include the population mean. to identify it easily it is red instead of the usual black. This is a probabilistic statement, so it may happen in your first sample or may not happen until you have generated 30 samples, but in the long run, the proportion of 95% confidence intervals that do not include the population mean will be around 5% or one out of 20. And this will happen no matter how large is your sample size. Sample size affects the precision of the estimate, the width of the 95% confidence interval, but, by its definition, the 95% Confidence interval will contain the true population value for 95% of the random samples.
 
+Let's suppose we selected a sample of n=400, the mean of the length was 13.25m, and the 95% Confidence interval [13.106;13.394]. The true average length value, that will usually be unknown, is 13.30m, which is included in the confidence interval. however there are lots of other values, infinite to be precise, that are included in the confidence interval. According to our sample and the confidence interval  we obtained from it, the mean population length of the Humpback whales could be 13.11m, or 13.21m, or 13.31m or any other value within the interval limits. And there is still a small chance, 5%, that the true population mean length is outside the limits, either way. 
+What if we generated the 99% confidence interval instead from the same sample? the 99% CI is [13.061;13.439]. Now, there is just 1% probability that the true value lies beyond the CI limits, but this has a cost, the 99% CI is wider than the 95% CI. 
+
+The confidence interval and the confidence levels are both related to the *p-value* that we are going to present in Workbook 3.
 
 ## Sampling strategies in environmental sciences
 
@@ -567,7 +651,12 @@ Strata should be defined carefully, based on the response of the attribute you a
 
 -   In proportion to the number of target individuals in each stratum;
 
--   in proportion to the amount of variability in each stratum.
+-   in proportion to the amount of variability in each stratum,
+
+and the sampling method used to obtain the subsamples within each stratum can be any that is considered suitable.
+
+An example of how we could do the sampling in a fish survey: in location A there is good conditions and a high density of fish; location B, however, has less favorable conditions so much fewer fish. Since we would like to have enough fishes from each site, we may choose to stratify to over-sample from location B to be able to understand this environmental gradient more.
+
 
 ```{r, out.width="80%", echo = FALSE}
 img <- readPNG("img/strat_sample.png")
@@ -597,6 +686,25 @@ And the Cons:
 -   Once you have the final sample, data analysis of the information becomes more complicated to take into account the layers of the stratum.
 
 -   for the same sample size, stratified designs yield estimates with lower precision than SRS.
+
+The analysis of data sampled using stratified sampling requires to apply weights when estimating something across the whole population. Getting back to the fish survey, if we select equal subsamples in the two site, the probability to select a fish from oversampled site B will be higher than the probility to select a fish from undersampled site A.  
+
+
+*Cluster sampling* is a probabilistic sampling technique. It involves dividing a population into clusters or groups, selecting a sample of clusters, and then sampling individuals or units within those clusters. The primary purpose of cluster sampling is to simplify the sampling process while still ensuring a representative sample of the population. 
+
+Clusters are formed based on specific characteristics relevant to the research study, such as geographical location, administrative boundaries, or organizational structure. Clusters should be randomly selected from the population to ensure unbiased representation. Randomization helps minimize selection bias and ensures that every cluster has an equal chance of being included in the sample. Clusters should ideally be internally homogeneous, meaning that individuals or units within the same cluster are similar or alike in relevant characteristics. This helps improve the sampling efficiency and enhances the representativeness of the sample. Clusters should be independent of each other to avoid duplication of sampling and ensure that each cluster contributes unique information to the sample. Overlapping or dependent clusters can lead to biased estimates and undermine the validity of the findings.
+
+The sampled clusters become the *Primary Sampling Units (PSU)* from which the individuals or units will be selected, becoming the *Secondary Sampling Units (SSU), using any of the methods described. 
+
+Cluster Sampling Advantages:
+- Efficiency: Cluster sampling is often more efficient than other sampling methods, especially when the population is large or geographically dispersed.
+- Cost-Effectiveness: By sampling entire clusters instead of individual units, you can reduce costs associated with recruitment, data collection, and analysis.
+- Logistical Feasibility: Cluster sampling simplifies the sampling process, making it easier to manage and execute, particularly in field-based or community-based research.
+
+Cluster Sampling Disadvantages
+- Increased Variability: Due to the clustering of individuals within clusters, there is a risk of increased variability in the sample estimates compared to simple random sampling. For a given sample size it yiels estimates that are less precise that those obtained through Simple Random Sampling.
+- Complex Analysis: Analyzing cluster sampling data requires specialized statistical techniques to account for the clustered nature of the sample, which can be more complicated than analyzing data from simple random samples.
+
 
 *Systematic sampling* is a probability sampling method in which researchers select members of the population at a regular interval (or k) determined in advance.If the population order is random or random-like, then this method will give you a representative sample that can be used to draw conclusions about the population.
 
@@ -652,19 +760,22 @@ img <- readJPEG("img/area-sampling-1024x958.jpeg")
 grid.raster(img)
 ```
 
-For more detailed and complicated examples of using the pivot functions, please follow this [link](https://tidyr.tidyverse.org/articles/pivot.html)
+*Purposive sampling* is a non-probabilistic sampling process in which a researcher selects a specific group of individuals or units for analysis because they have characteristics that are needed in the sample. This method is appropriate when the researcher has a clear idea of the characteristics or attributes they are interested in studying and wants to select a sample representative of those characteristics. So, units are not selected by a random process, but "on purpose". 
+
+It is also known as *judgemental sampling*, and this method relies on the researcher’s judgement when identifying and selecting the individuals, cases, or sites that can provide the best information to achieve the study’s objectives.
+
+Purposive sampling is best used when you want to focus in depth on relatively small samples. Perhaps you would like to access a particular subset of the population that shares certain characteristics, or you are researching issues likely to have unique cases. It is particularly useful if you need to find information-rich cases or make the most out of limited resources.
+
+
 
 
 ## External Links and Resources
 
-[Long vs Wide Video](https://www.youtube.com/watch?v=m9V9MwnM3rs)
+Webster, R. and Lark, M. (2013) Field Sampling for Environmental Science and Management
+(This book provides guidance on the design and analysis of sampling method, backed by sound rationale and statistical theory. It concentrates on design-based sampling for estimates of mean values of environmental properties, emphasizing replication and randomization.) 
 
-[Tidyr package details](https://tidyr.tidyverse.org/)
+[Populations and samples](https://www.bmj.com/about-bmj/resources-readers/publications/statistics-square-one/3-populations-and-samples)
 
-[Pivot examples](https://tidyr.tidyverse.org/articles/pivot.html)
+[Confidence Intervals](https://www.bmj.com/about-bmj/resources-readers/publications/statistics-square-one/4-statements-probability-and-confiden)
 
-[R for Data science - Pivoting](https://r4ds.had.co.nz/tidy-data.html#pivoting)
-
-[Analysis factor - Wide vs Long data](https://www.theanalysisfactor.com/wide-and-long-data/)
-
-[Statology - Long vs wide data](https://www.statology.org/long-vs-wide-data/)
+[Sampling and Estimation](https://www.youtube.com/watch?v=kEUN7_b-ja8)
