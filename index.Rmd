@@ -640,9 +640,9 @@ The confidence interval and the confidence levels are both related to the *p-val
 
 In this section, we are going to explore some of the common sampling methods in environmental sciences.
 
-*Stratified Sampling:* is a probability sampling method that involves the division of a population into smaller homogeneous subgroups known as strata prior to sampling. In stratified random sampling, or stratification, the strata are formed based on strata shared attributes or characteristics such as soil characteristics, slope, age or sex of individuals. simple random samples are then taken within each stratum. It is also called proportional random sampling or quota random sampling.
+*Stratified Sampling:* is a probabilistic sampling method that involves the division of a population into smaller homogeneous subgroups known as strata prior to sampling. In stratified random sampling, or stratification, the strata are formed based on strata shared attributes or characteristics such as soil characteristics, slope, age or sex of individuals. simple random samples are then taken within each stratum. It is also called proportional random sampling or quota random sampling.
 Strata should be defined carefully, based on the response of the attribute you are estimating to habitat characteristics that are unlikely to change over the time of the study
-• If there is no obvious reason for the difference in your area under investigation, you’re probably better off using a simple random sampling procedure
+• If there is no obvious reason for the difference in your area under investigation, you are probably better off using a simple random sampling procedure
 • Sampling units do not have to be allocated in equal numbers to each stratum. Some options on how to allocate sub-sample sizes to each stratum are:
 
 -   equally to each stratum;
@@ -659,7 +659,7 @@ An example of how we could do the sampling in a fish survey: in location A there
 
 
 ```{r, out.width="80%", echo = FALSE}
-img <- readPNG("img/strat_sample.png")
+img <- readJPEG("img/Stratified Sampling.jpg")
 grid.raster(img)
 ```
 
@@ -696,6 +696,11 @@ Clusters are formed based on specific characteristics relevant to the research s
 
 The sampled clusters become the *Primary Sampling Units (PSU)* from which the individuals or units will be selected, becoming the *Secondary Sampling Units (SSU), using any of the methods described. 
 
+```{r, out.width="80%", echo = FALSE}
+img <- readPNG("img/Cluster sampling.png")
+grid.raster(img)
+```
+
 Cluster Sampling Advantages:
 - Efficiency: Cluster sampling is often more efficient than other sampling methods, especially when the population is large or geographically dispersed.
 - Cost-Effectiveness: By sampling entire clusters instead of individual units, you can reduce costs associated with recruitment, data collection, and analysis.
@@ -717,7 +722,7 @@ The pros of systematic sampling are that its easy to use, While it retains an el
 The cons are related to the fact that Systematic sampling can remove some of the unpredictability from a sample, meaning that a researcher could potentially manipulate the results by choosing a starting point that favours their preferred outcome.
 
 *
-We still wish to sample a fraction of 1 in , so if the population size N is unknown, it must be estimated. In this case, the initial study unit is randomly selected from the first k units that become available, for some k. After this, each kth consecutive unit is chosen. For example, we might sample the 3rd person entering a health care clinic on a certain day, and every 10th person thereafter. The sampling frame is compiled as the study progresses.
+We still wish to sample a fraction of 1 in k, so if the population size N is unknown, it must be estimated. In this case, the initial study unit is randomly selected from the first k units that become available, for some k. After this, each kth consecutive unit is chosen. For example, we might sample the 3rd person entering a health care clinic on a certain day, and every 10th person thereafter. The sampling frame is compiled as the study progresses.
 *
 *Transect sampling* is a method used to study the distribution and abundance of organisms along a line or pathway. The transect is simply a line that spans the gradient of interest, and then you locate your sample plots along this line (see Figure XXX). The length of your transect would be determined by the gradient you are sampling. For example, research has shown that the “edge effects” of a forest can be seen up to 100 meters into the forest, so to examine this gradient you would want to use a transect at least 100 meters long.
 Locating sample plots along the transect either in a uniform manner (i.e. every 10 meters) or by “randomly stratifying” the sample plots. Random stratification adds the element of randomness to your sample plot select even when using a transect. To randomly stratify your sample plots, divide the transect into logical subdivisions given the length of your transect (i.e. every 50 meters for a 500 meter transect or every 10-20 meters for a 100 meter transect) and the pattern you are trying to examine (i.e. if you expect rapid change then perhaps more subdivisions, if you expect slow graduate change, then perhaps fewer subdivisions). Then randomly allocate the sample plots within each subdivision of the transect (see Figure ).
@@ -740,9 +745,9 @@ grid.raster(img)
 ```
 
 The pros of quadrat sampling are:
-- It sampling is easy to use, inexpensive.
+- The method is easy to use, inexpensive.
 - It is suitable for studying plants, slow-moving animals and faster-moving animals with a small range.
-- It requires the researcher to perform the work in the field and, without care.
+- It requires the researcher to perform the work in the field.
 - It measures abundance and needed cheap equipment.
 
 Some cons are:
@@ -750,7 +755,6 @@ Some cons are:
 - There exists biasness in favor of slow moving taxa.
 - Collect only taxa that are present in the sampling time and not buried too deeper in sediment.
 - It is a low estimate of taxonomic richness and assemblage composition.
-- It is also a low detectability of among-site differences in assemblage composition.
 - Some animals may experience harm if the scientist collects the population within the quadrat rather than studying it in the field.
 
 A nice summary of sampling approaches can be found in the figure below
