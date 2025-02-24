@@ -35,7 +35,7 @@ plot_theme<-theme_light()+
   theme(plot.title=element_text(face =2,size=18),
         axis.title=element_text(face =2,size=14),
         plot.subtitle=element_text(face =3,size=14),
-        axis.text=element_text(face =1,size=12),
+        axis.text=element_text(face =1,size=12), 
         strip.text=element_text(face =1,size=12))
 
 
@@ -74,7 +74,7 @@ In this session we will cover:
 
 -   Finally, we will review some of the most commons sampling strategies used in environmental sciences.
 
-In these workbooks all output produced will come from the use of R, and all of the code used in the workbooks can be found on GitHub here: [CHANGE GITHUB REPOSITORY] <https://github.com/stats4sd/Stats_ReIntro_M2>. But the principles are identical regardless of which data analysis tool is being used.Whichever tool is being used for data analysis - it will require that the user is familiar enough with it to be able to generate any sort of summary or plot or transformation that they might suddenly think could be useful!
+In these workbooks all output produced will come from the use of R, and all of the code used in the workbooks can be found on GitHub here: <https://github.com/stats4sd/Stats_ReIntro_M2>. But the principles are identical regardless of which data analysis tool is being used.Whichever tool is being used for data analysis - it will require that the user is familiar enough with it to be able to generate any sort of summary or plot or transformation that they might suddenly think could be useful!
 
 ## Data being used in this workbook
 In this session we are going to use a public dataset produced by the Ocean Biodiversity Information system (OBIS). It contains the Historic whale catch records from Australian whaling stations (1925-1978). The full data set and other details can be found here <https://obis.org/dataset/43e4c2cc-5886-427f-a4a9-d47d2635d246>. It contains 38267 records, but we will use a subset: the data corresponding to the most common caught whale, the Humpback (Megaptera novaeangliae). 
