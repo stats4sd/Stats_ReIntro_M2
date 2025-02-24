@@ -58,13 +58,12 @@ Whale %>%
 In this second workbook, we are going to be taking a closer look at sampling and estimation.
  
 Sampling consists of selecting some part of a population to observe, so one may estimate something about the whole population, or infer and test hypothesis about the population characteristics, or fit models that explain or predict some population outcome. In this workbook we are going to discuss some general ideas about sampling and their relationship to estimation. In Workbook 3 we are going to discuss inference and hypothesis testing and in Module 4 and 5 model fitting.
+
 As an example of sampling for estimation, in order to estimate the amount of lichen available as food for caribou, a biologists collects lichen from selected small plots within the study area. Based on the dry weight of the sample collected, the available amount of food for the whole region can be estimated. Similarly, to estimate the average weight of the individuals of a bird species, some individuals are captured, weighted (and released) and based on these measurements, the average weight of the individuals can be estimated.
 
-Sampling is the process used to collect the data, estimation uses the sampled data to provide an estimate of a population parameter using such data.   
+Sampling is the process used to collect the data, estimation uses the sampled data to provide an estimate of a population parameter (that is unknown) using such data.   
 
 In this session we will cover:
-
--   A brief description of some of the most used types of sampling units in environmental sciences
 
 -   What is sampling and what are the desirable properties of a good sampling scheme
 
@@ -74,12 +73,12 @@ In this session we will cover:
 
 -   Finally, we will review some of the most commons sampling strategies used in environmental sciences.
 
-In these workbooks all output produced will come from the use of R, and all of the code used in the workbooks can be found on GitHub here: <https://github.com/stats4sd/Stats_ReIntro_M2>. But the principles are identical regardless of which data analysis tool is being used.Whichever tool is being used for data analysis - it will require that the user is familiar enough with it to be able to generate any sort of summary or plot or transformation that they might suddenly think could be useful!
+In these workbooks all output produced will come from the use of R, and all of the code used in the workbooks can be found on GitHub here: <https://github.com/stats4sd/Stats_ReIntro_M2>. But the principles are identical regardless of which data analysis tool is being used. Whichever tool is being used for data analysis - it will require that the user is familiar enough with it to be able to generate any sort of summary and compute precision measures such as a confidence interval!
 
 ## Data being used in this workbook
-In this session we are going to use a public dataset produced by the Ocean Biodiversity Information system (OBIS). It contains the Historic whale catch records from Australian whaling stations (1925-1978). The full data set and other details can be found here <https://obis.org/dataset/43e4c2cc-5886-427f-a4a9-d47d2635d246>. It contains 38267 records, but we will use a subset: the data corresponding to the most common caught whale, the Humpback (Megaptera novaeangliae). 
+In this session we are going to use a public dataset produced by the Ocean Biodiversity Information system (OBIS). It contains the Historic whale catch records from Australian whaling stations (1925-1978). The full data set and other details can be found here <https://obis.org/dataset/43e4c2cc-5886-427f-a4a9-d47d2635d246>. It contains 38267 records, but we will use a subset: the data corresponding to the most common caught whale, the Humpback (Megaptera novaeangliae), that contains 23581 records. 
 
-We have also edited it to contain only the columns we are interested in. Below you can explore the the data we are going to use in this workbook.
+We have also edited it to include only the columns we are interested in. Below you can explore the the data we are going to use in this workbook.
 
 ```{r, echo=FALSE}
 DT::datatable(Whale)
@@ -88,18 +87,19 @@ DT::datatable(Whale)
 
 ## Population and Sample
 
-In statistics the term “population” has a slightly different meaning from the one given to it in ordinary speech. It need not refer only to people or to animate creatures – the population of Britain, for instance or the dog population of London. Statisticians also speak of a population of objects, or events, or procedures, or observations, including such things as the quantity of lead in urine, amount of lead in liver tissue in wild salmon, or area burnt in wild fires. A population is thus an aggregate of creatures, things, cases and so on.
+In statistics the term “population” has a slightly different meaning from the one given to it in ordinary speech. It need not refer only to people or to animate creatures – the population of Britain, for instance or the dog population of London. Statisticians also speak of a population of objects, or events, or procedures, or observations, including such things as the quantity of lead in urine, amount of heavy metals in liver tissue of wild salmon, or area burnt in wild fires. A population is thus an aggregate of creatures, things, cases and so on.
 
 we call *Population* the entire group of individuals to which findings of the study are to be extrapolated. 
 The individual members of the population whose characteristics are to be measured are the *units* of the population.
 The units can be, basically, anything: people, individual birds of a given species, ground plots, plants, individuals of an animal species, households, hospitals, schools or business. Examples of characteristics that we can measure in populations are the proportion of male/female, or the proportion of given subspecies (proportion of Humpback whales among the population of whales), or the average height or diameter in trees or the average length of the population of Humpback whales.
-The population must be fully defined so that those to be included and excluded are clearly spelt out (inclusion and exclusion criteria). There is, however, a trade-off between stricter conditions for inclusion – which may reduce variability in the population but decrease the generalisability of the results. For example, we can define our population of whales as all whales in the world, or just Humpback whales, or female Humpback whales, or female Humpback whales in the Australia shores, or ... We can define a population as the trees of a given species in a single area of a forest, or in the whole forest, or across a region of a country, or in the whole country, or .... The less strict the inclusion criteria, the larger the variability, the stricter the criteria, the more homogeneous the populaton will be, but also the smaller the population we can make generalisations from our sample. 
+
+The population must be fully defined so that those to be included and excluded are clearly spelt out (inclusion and exclusion criteria). There is, however, a trade-off between stricter conditions for inclusion – which may reduce variability in the population but decrease the generalisability of the results. For example, we can define our population of whales as all whales in the world, or just Humpback whales, or female Humpback whales, or female Humpback whales in the Australia shores, or ... We can define a population as the trees of a given species in a single area of a forest, or in the whole forest, or across a region of a country, or in the whole country, or .... The less strict the inclusion criteria, the larger the variability in the population, the stricter the criteria, the more homogeneous the populaton will be, but also the smaller the population we can make generalisations from our sample. 
 
 Although a researcher should clearly define the population he or she is dealing with, they may not be able to enumerate it exactly. For instance, in ordinary usage the population of England denotes the number of people within England’s boundaries, perhaps as enumerated at a census. But people die and are born continuously, some people may leave the country whereas others may come from abroad to live in. Defining the population is not always straightforward.
 
 ### Sample
 
-Although we would like to know the value of certain characteristics of the population, we can't measure all the units, because of time and budget constrains, but also because sometimes the process of measurement affects, even kills or destroys, the unit, and therefore we are not supposed to do this for the whole population. Think of the lichen example above, if we collected all the lichen in an area and dry it, we would have none left! Or if we wanted to study the lead content in the liver of Salmon, we will have to kill all the salmon to obtain the results!
+Although we would like to know the value of certain characteristics of the population, we can't measure all the units, because of time and budget constrains, but also because sometimes the process of measurement affects, even kills or destroys, the unit, and therefore we are not supposed to do this for the whole population. Think of the lichen example above, if we collected all the lichen in an area and dry it, we would have none left! Or if we wanted to study the lead content in the liver of salmon, we will have to kill all the salmon to obtain the results!
 
 Therefore, we usually select a subset (the *Sample*) from the original population and observe/measure all the units in it, and use this to get an *Estimate* of the population value or answer questions about the population value. A well chosen sample will contain most of the information about a particular population characteristic. 
 
@@ -129,11 +129,13 @@ Let's try to identify the key concepts in this process:
 
 The procedure by which the sample of units is selected from the population is called *Sampling*. Sample units are then observed and some characteristic is measured. The sample will consist of these measurements along with other information that may allow the identification of each unit.
 
-We will, then, use this sample data to estimate some population characteristic. But, while the population characteristic remains fixed, its estimate depends on which sample is selected. There are two desirable characteristics of the estimates than can be controlled when we design the sampling scheme:
+We will, then, use this sample data to estimate some population characteristic. But, while the population characteristic remains fixed, its estimate depends on which sample is selected. Therefore, different samples from the same population will produce different estimates of the same population characteristic. 
 
--   being unbiased: the estimates are targeting the true (but unknown) population value, possibly the estimate won't have same value as the population value, but will be "around" it, close to it. This is achieved obtaining *representative samples* by selecting the units in the sample randomly (or, at least, with some degree of randomness), using probabilistic sampling methods.
+There are two desirable characteristics of the estimates than can be controlled when we design the sampling scheme:
 
--   The precision of the estimate: how close we expect our estimate to be with respect to the true population value, the closer it is, the more precise the estimate. Precision is controlled with the sample size, the larger the sample size, the greater the precision of the estimate.
+-   *being unbiased*: the estimates are targeting the true (but unknown) population value, possibly the estimate won't have same value as the population value, but will be "around" it, close to it. This is achieved obtaining *representative samples* by selecting the units in the sample randomly (or, at least, with some degree of randomness), using probabilistic sampling methods.
+
+-   *The precision* of the estimate: how close we expect our estimate to be with respect to the true population value, the closer it is, the more precise the estimate. Precision is controlled with the sample size, the larger the sample size, the greater the precision of the estimate.
 
 The picture below shows the two concepts of precision and bias.
 
@@ -151,18 +153,18 @@ Each dot represents an estimate obtained from one sample and the bull's eye the 
 
 The problem, however, is that we usually don't know the actual value of the population characteristic, and that we have only one sample!
 
-A quick an easy way to look at this is obtaining the mean of samples of the result of rolling a dice. Let's assume the dice is perfectly balanced, if it weren't we would obtain biased estimates. In this case, we know what we expect to obtain:
+A quick an easy way to look at this is obtaining the mean of samples of the result of rolling a dice. Let's assume the dice is perfectly balanced, if it weren't we would obtain biased estimates. When the dice is perfectly balanced we know what we expect to obtain:
 
 -   the proportion of 1's, 2's, 3's,... should be approximately the same, and approximately 1/6 or 16,67%
 
 -   the average of the result of rolling N dices will be close to 3.5
 
 
-Once you select below the number of dices, N, you will obtain a new random sample. We can use this sample to estimate the probability to obtain a result (say, a "2") and the population average.
-We will use the new sample mean as the new population mean estimate and the proportion of "2" in the sample as the estimate of the probability of obtaining a "2".
+Once you select below the number of dices, N, you will obtain a new random sample. We can use this sample to estimate the probability to obtain a result (say, a "six") and the population average.
+We will use the new sample mean as the new population mean estimate and the proportion of "six" in the sample as the estimate of the probability of obtaining a "six".
 By generating repeated samples you will observe that they are probably not equal to the expected average (3.5) but a value that sometimes is greater than 3.5 and sometimes smaller than 3.5, with the occasional result equal to 3.5. This highlights the idea of an unbiased estimate, as it is targeting (with some error) the true population value of 3.5, and the idea of precision, as the estimate will rarely be the actual population value, and we can observe how far is from it. 
 
-Now, let's change the sample size, for example n=100 or n=1000. You will observe how the sample mean still varies each time, but deviates less from the true value of 3.5. The same happens with the proportion of "2", the larger the sample size, the closer it is to 16.67%. 
+Now, let's change the sample size, for example n=100 or n=1000. You will observe how the sample mean still varies each time, but deviates less from the true value of 3.5. The same happens with the proportion of "six", the larger the sample size, the closer it is to 16.67%. 
 
 ```{r dice_ui, context="render",echo=FALSE}
 
@@ -291,7 +293,7 @@ The non-sampling errors come from all other fronts:
 -   when dealing with humans, response bias is a source of non-sampling errors. It happens when a number of different conditions or factors may cue respondents to provide inaccurate or false answers during surveys or interviews. For example, a professor is asking their students whether they have ever cheated on exams in his class, the participants are not likely to respond truthfully; instead their responses are biased toward responses that are expected from them.
 
 
-The non-sampling affect the accuracy of the estimates, and are the cause of bias.
+The non-sampling error affects the accuracy of the estimates, and are the cause of bias.
 
 Non-sampling errors are unavoidable, but they can be reduced being careful during design and data collection stages:
 
@@ -332,15 +334,15 @@ In the previous sections we have seen what happens when we take several samples 
 
 Simple Random Sampling (SRS) is the probabilistic sampling design in which every unit in the population has exactly the same probability to be selected. It is the most efficient sampling design, as it provides the most precise estimates of the population characteristic for a given sample size, and these estimates are unbiased.
 
-The winning numbers of the lotto, the result of rolling a dice or tossing a coin are examples of simple random sampling, as we know beforehand that all the possible outcomes have exactly the same probability.we can extract a Simple Random Sample of whales from our dataset by allocating the same probability to be selected to each whale. 
+The winning numbers of the lotto, the result of rolling a dice or tossing a coin are examples of simple random sampling, as we know beforehand that all the possible outcomes have exactly the same probability. We can extract a Simple Random Sample of whales from our dataset by allocating the same probability to be selected to each whale. 
 
-Unfortunately, not always it is possible to use this sampling plan We will discuss later, in the *Sampling strategies in environmental sciences* section, other options when SRS is not possible or economically inefficient.
+Unfortunately, not always it is possible to use this sampling plan. We will discuss later, in the *Sampling strategies in environmental sciences* section, other options when SRS is not possible or economically inefficient.
 
 
 
 ## Estimation
 
-In a SRS, *the best estimate* for the 
+In a Simple Random Sampling scheme, *the best estimate* for the 
 
 -   *population mean* is the sample mean
 
@@ -350,7 +352,7 @@ In a SRS, *the best estimate* for the
 
 The estimate is *best* because it is unbiased and with maximum precision. 
 
-These estimates provide a single value for the population characteristic, they are known as the point estimates. If the SRsampling has been conducted properly we can expect no biases. However, as we saw previously in the sample obtained by rolling a dice several times, they are not (in general) equal to the population value, sometimes they are going to be greater than it, sometimes smaller, and in a very few cases, equal to sample mean.
+These estimates provide a single value for the population characteristic, they are known as the point estimates. If the SRsampling has been conducted properly we can expect no biases. However, as we saw previously in the sample obtained by rolling a dice several times, they are not (in general) equal to the population value, sometimes they are going to be greater than it, sometimes smaller, and in a very few cases, and just by random chance, equal to sample mean.
 
 We, therefore, would like to know how precise our estimate is, how close it is to the population value. So we add to the point estimate a measure of precision of it. There are different ways of computing this degree of precision (or uncertainty):
 
@@ -362,7 +364,7 @@ We, therefore, would like to know how precise our estimate is, how close it is t
 
 All of them are related, so if you know one of them you can easily obtain the other two. For example, a possible margin of error is calculated as: Margin of error = 2 × standard error. We will discuss the confidence interval in the next sub-section.
 
-note that we use the term *error* to measure the degree of precision/uncertainty in or estimates.
+Note that we use the term *error* to measure the degree of precision/uncertainty in or estimates.
 
 If we obtain *k* samples of *n* units each from the same population, and compute the mean of each sample, we will have *k* estimates of the population mean (and the same applies for the variance or the proportion, when applicable), as their means will vary from one sample to another. Like the series of observations in each sample, the sample of *k* sample means has a standard deviation. The standard error of the mean of one sample is an estimate of the standard deviation that would be obtained from the means of a large number of samples drawn from that population.
  
@@ -385,7 +387,7 @@ from previous data or knowledge.
 It is important to realise that we do not have to take repeated samples in order to estimate the standard error, there is sufficient information within a single sample. 
 
 An interesting result of this is that the sample size depends on the precision you would like to achieve (or that the precision of your estimates will depend on the sample size), but it does not depend on the population size, provided that your population is large enough. The sample size is a figure, not a percentage!!
-For small populations, and small here means up to some hundreds, a correction applies, so we won't get sample sizes greater than the population size!
+For small populations, and small here means up to some hundreds, a correction applies, so to achieve a certain precision we won't need sample sizes greater than the population size!
 
 
 ### Confidence Interval
@@ -423,9 +425,9 @@ Whale %>%
   gt::gt()
 ```
 
-There are roughly 60% of Male and 40% of female whales. Does this result show that these are, approximately, the true proportions of each sex? Or does it show that it is easier to catch male than female whales? Or does it show that the whalers were more interested in male than in female whales? We don't know, but for the purpose of this exercise, we will assume that these are the true proportions of male and female whales: 59.7% are male and 40.2% are female.Note also that for 25 whales out of 23581 (0.1%) sex could not be identified, and 1 whale was hermaphrodite!
+There are roughly 60% of Male and 40% of female whales. Does this result show that these are, approximately, the true proportions of each sex? Or does it show that it is easier to catch male than female whales? Or does it show that the whalers were more interested in male than in female whales? We don't know, but for the purpose of this exercise, we will assume that these are the true proportions of male and female whales: 59.7% are male and 40.2% are female. Note also that for 25 whales out of 23581 (0.1%) sex could not be identified, and 1 whale was hermaphrodite!
 
-the table below summarises the length of the whales
+The table below summarises the length of the whales
 
 ```{r sum_table, echo = FALSE}
 
@@ -469,7 +471,7 @@ Take a look at graphical display of the length in the interactive plot below
 
 
 
-Let's assume that the 23550 whales reported in the dataset are the population of whales in the Australian shores, and let's see what happens if we takes samples from it and observe how the sample mean of the length and the proportion of male/female, the estimate for the population mean and the proportion of male/female, behave as we obtain a new sample. The sampling method used is Simple Random sampling, each unit has exactly the same probability to be selected.
+Let's assume that the 23581 whales reported in the dataset are the population of whales in the Australian shores, and let's see what happens if we takes samples from it and observe how the sample mean of the length and the proportion of male/female behaves as we obtain a new sample. The sampling method used is Simple Random sampling, each unit has exactly the same probability to be selected.
 
 
 ```{r sample_ui, context="render",echo=FALSE}
@@ -629,7 +631,7 @@ output$cumulative_ci_plot<-renderPlot({
 
 As the sample size grows, again, the 95% confidence interval will get narrower. For example, if you generate a sample of size n=50 and generate the 95% Confidence interval and then generate a new sample of size n=4*50=200, the width of the new sample 95% Confidence interval will be a half of the first one, as the with of the Confidence interval is proportional to 1/sqrt(n).
 
-95% of the 95% Confidence intervals, or 19 out of 20, should include the population mean, that is represented by the horizontal line in the plot. If you keep generating samples and their corresponding 95% CI long enough, you will find that one Confidence Interval does not include the population mean. to identify it easily it is red instead of the usual black. This is a probabilistic statement, so it may happen in your first sample or may not happen until you have generated 30 samples, but in the long run, the proportion of 95% confidence intervals that do not include the population mean will be around 5% or one out of 20. And this will happen no matter how large is your sample size. Sample size affects the precision of the estimate, the width of the 95% confidence interval, but, by its definition, the 95% Confidence interval will contain the true population value for 95% of the random samples.
+95% of the 95% Confidence intervals, or 19 out of 20, should include the population mean, that is represented by the horizontal line in the plot. If you keep generating samples and their corresponding 95% CI long enough, you will find that one Confidence Interval does not include the population mean. To identify it easily it is red instead of the usual black. This is a probabilistic statement, so it may happen in your first sample or may not happen until you have generated 30 samples, but in the long run, the proportion of 95% confidence intervals that do not include the population mean will be around 5% or one out of 20. And this will happen no matter how large is your sample size. Sample size affects the precision of the estimate, the width of the 95% confidence interval, but, by its definition, the 95% Confidence interval will contain the true population value for 95% of the random samples.
 
 Let's suppose we selected a sample of n=400, the mean of the length was 13.25m, and the 95% Confidence interval [13.106;13.394]. The true average length value, that will usually be unknown, is 13.30m, which is included in the confidence interval. however there are lots of other values, infinite to be precise, that are included in the confidence interval. According to our sample and the confidence interval  we obtained from it, the mean population length of the Humpback whales could be 13.11m, or 13.21m, or 13.31m or any other value within the interval limits. And there is still a small chance, 5%, that the true population mean length is outside the limits, either way. 
 What if we generated the 99% confidence interval instead from the same sample? the 99% CI is [13.061;13.439]. Now, there is just 1% probability that the true value lies beyond the CI limits, but this has a cost, the 99% CI is wider than the 95% CI. 
@@ -640,9 +642,15 @@ The confidence interval and the confidence levels are both related to the *p-val
 
 In this section, we are going to explore some of the common sampling methods in environmental sciences.
 
-*Stratified Sampling:* is a probabilistic sampling method that involves the division of a population into smaller homogeneous subgroups known as strata prior to sampling. In stratified random sampling, or stratification, the strata are formed based on strata shared attributes or characteristics such as soil characteristics, slope, age or sex of individuals. simple random samples are then taken within each stratum. It is also called proportional random sampling or quota random sampling.
+
+### Stratified Sampling
+
+*Stratified Sampling:* is a probabilistic sampling method that involves the division of a population into smaller homogeneous subgroups known as strata prior to sampling. In stratified random sampling, or stratification, the strata are formed based on shared attributes or characteristics such as soil characteristics, slope, age or sex of individuals. simple random samples are then taken within each stratum. It is also called proportional random sampling or quota random sampling.
+
 Strata should be defined carefully, based on the response of the attribute you are estimating to habitat characteristics that are unlikely to change over the time of the study
+
 • If there is no obvious reason for the difference in your area under investigation, you are probably better off using a simple random sampling procedure
+
 • Sampling units do not have to be allocated in equal numbers to each stratum. Some options on how to allocate sub-sample sizes to each stratum are:
 
 -   equally to each stratum;
@@ -655,13 +663,13 @@ Strata should be defined carefully, based on the response of the attribute you a
 
 and the sampling method used to obtain the subsamples within each stratum can be any that is considered suitable.
 
-An example of how we could do the sampling in a fish survey: in location A there is good conditions and a high density of fish; location B, however, has less favorable conditions so much fewer fish. Since we would like to have enough fishes from each site, we may choose to stratify to over-sample from location B to be able to understand this environmental gradient more.
-
 
 ```{r, out.width="80%", echo = FALSE}
 img <- readJPEG("img/Stratified Sampling.jpg")
 grid.raster(img)
 ```
+
+An example of how we could do the sampling in a fish survey: in location A there is good conditions and a high density of fish; location B, however, has less favorable conditions so much fewer fish. Since we would like to have enough fishes from each site, we may choose to stratify to over-sample from location B to be able to understand this environmental gradient more.
 
 
 The method is useful when the attribute of interest responds very differently to some clearly defined habitat structure or when we want to make sure that some areas/characteristics such as sex or age are included in the sample. The recommendations within strata are the same of simple random sampling
@@ -690,11 +698,13 @@ And the Cons:
 The analysis of data sampled using stratified sampling requires to apply weights when estimating something across the whole population. Getting back to the fish survey, if we select equal subsamples in the two site, the probability to select a fish from oversampled site B will be higher than the probility to select a fish from undersampled site A.  
 
 
-*Cluster sampling* is a probabilistic sampling technique. It involves dividing a population into clusters or groups, selecting a sample of clusters, and then sampling individuals or units within those clusters. The primary purpose of cluster sampling is to simplify the sampling process while still ensuring a representative sample of the population. 
+### Cluster sampling
+
+*Cluster sampling* is another probabilistic sampling technique. It involves dividing a population into clusters or groups, selecting a sample of clusters, and then sampling individuals or units within those clusters. The primary purpose of cluster sampling is to simplify the sampling process while still ensuring a representative sample of the population. 
 
 Clusters are formed based on specific characteristics relevant to the research study, such as geographical location, administrative boundaries, or organizational structure. Clusters should be randomly selected from the population to ensure unbiased representation. Randomization helps minimize selection bias and ensures that every cluster has an equal chance of being included in the sample. Clusters should ideally be internally homogeneous, meaning that individuals or units within the same cluster are similar or alike in relevant characteristics. This helps improve the sampling efficiency and enhances the representativeness of the sample. Clusters should be independent of each other to avoid duplication of sampling and ensure that each cluster contributes unique information to the sample. Overlapping or dependent clusters can lead to biased estimates and undermine the validity of the findings.
 
-The sampled clusters become the *Primary Sampling Units (PSU)* from which the individuals or units will be selected, becoming the *Secondary Sampling Units (SSU), using any of the methods described. 
+The sampled clusters become the *Primary Sampling Units (PSU)* from which the individuals or units will be selected, becoming the *Secondary Sampling Units* (SSU), using any of the methods described. 
 
 ```{r, out.width="80%", echo = FALSE}
 img <- readPNG("img/Cluster sampling.png")
@@ -702,42 +712,58 @@ grid.raster(img)
 ```
 
 Cluster Sampling Advantages:
-- Efficiency: Cluster sampling is often more efficient than other sampling methods, especially when the population is large or geographically dispersed.
-- Cost-Effectiveness: By sampling entire clusters instead of individual units, you can reduce costs associated with recruitment, data collection, and analysis.
-- Logistical Feasibility: Cluster sampling simplifies the sampling process, making it easier to manage and execute, particularly in field-based or community-based research.
+
+-   Efficiency: Cluster sampling is often more efficient than other sampling methods, especially when the population is large or geographically dispersed.
+
+-   Cost-Effectiveness: By sampling entire clusters instead of individual units, you can reduce costs associated with recruitment, data collection, and analysis.
+
+-   Logistical Feasibility: Cluster sampling simplifies the sampling process, making it easier to manage and execute, particularly in field-based or community-based research.
 
 Cluster Sampling Disadvantages
-- Increased Variability: Due to the clustering of individuals within clusters, there is a risk of increased variability in the sample estimates compared to simple random sampling. For a given sample size it yiels estimates that are less precise that those obtained through Simple Random Sampling.
-- Complex Analysis: Analyzing cluster sampling data requires specialized statistical techniques to account for the clustered nature of the sample, which can be more complicated than analyzing data from simple random samples.
 
+-   Increased Variability: Due to the clustering of individuals within clusters, there is a risk of increased variability in the sample estimates compared to simple random sampling. For a given sample size it yiels estimates that are less precise that those obtained through Simple Random Sampling.
 
-*Systematic sampling* is a probability sampling method in which researchers select members of the population at a regular interval (or k) determined in advance.If the population order is random or random-like, then this method will give you a representative sample that can be used to draw conclusions about the population.
+-   Complex Analysis: Analyzing cluster sampling data requires specialized statistical techniques to account for the clustered nature of the sample, which can be more complicated than analyzing data from simple random samples.
+
+### Systematic sampling
+
+*Systematic sampling* is yet another probability sampling method in which researchers select members of the population at a regular interval (or *k*) determined in advance. If the population order is random or random-like, then this method will give you a representative sample that can be used to draw conclusions about the population.
 
 ```{r, out.width="80%", echo = FALSE}
 img <- readPNG("img/Systematic sampling.png")
 grid.raster(img)
 ```
 
-The pros of systematic sampling are that its easy to use, While it retains an element of randomness, it also introduces some control and process into the selection process, it's low risk and it's resistant to bias, as After the initial starting point is selected, researchers have little control over who/what gets selected for systematic sampling.
+The pros of systematic sampling are that its easy to use, While it retains an element of randomness, it also introduces some control and process into the selection process, it's low risk and it's resistant to bias, as after the initial starting point is selected, researchers have little control over who/what gets selected for systematic sampling.
 The cons are related to the fact that Systematic sampling can remove some of the unpredictability from a sample, meaning that a researcher could potentially manipulate the results by choosing a starting point that favours their preferred outcome.
 
-*
-We still wish to sample a fraction of 1 in k, so if the population size N is unknown, it must be estimated. In this case, the initial study unit is randomly selected from the first k units that become available, for some k. After this, each kth consecutive unit is chosen. For example, we might sample the 3rd person entering a health care clinic on a certain day, and every 10th person thereafter. The sampling frame is compiled as the study progresses.
-*
-*Transect sampling* is a method used to study the distribution and abundance of organisms along a line or pathway. The transect is simply a line that spans the gradient of interest, and then you locate your sample plots along this line (see Figure XXX). The length of your transect would be determined by the gradient you are sampling. For example, research has shown that the “edge effects” of a forest can be seen up to 100 meters into the forest, so to examine this gradient you would want to use a transect at least 100 meters long.
-Locating sample plots along the transect either in a uniform manner (i.e. every 10 meters) or by “randomly stratifying” the sample plots. Random stratification adds the element of randomness to your sample plot select even when using a transect. To randomly stratify your sample plots, divide the transect into logical subdivisions given the length of your transect (i.e. every 50 meters for a 500 meter transect or every 10-20 meters for a 100 meter transect) and the pattern you are trying to examine (i.e. if you expect rapid change then perhaps more subdivisions, if you expect slow graduate change, then perhaps fewer subdivisions). Then randomly allocate the sample plots within each subdivision of the transect (see Figure ).
+
+With Systematic sampling, we still wish to sample a fraction of *1 in k*, so if the population size *N* is unknown, it must be estimated. In this case, the initial study unit is randomly selected from the first *k* units that become available, for some *k*. After this, each kth consecutive unit is chosen. For example, we might sample the 3rd person entering a health care clinic on a certain day, and every 10th person thereafter. The sampling frame is compiled as the study progresses.
+
+
+### Transect sampling
+
+*Transect sampling* is a method used to study the distribution and abundance of organisms along a line or pathway. The transect is simply a line that spans the gradient of interest, and then you locate your sample plots along this line (see the figure below). The length of your transect would be determined by the gradient you are sampling. For example, research has shown that the “edge effects” of a forest can be seen up to 100 meters into the forest, so to examine this gradient you would want to use a transect at least 100 meters long.
+
+Locating sample plots along the transect either in a uniform manner (i.e. every 25 meters) or by “randomly stratifying” the sample plots. Random stratification adds the element of randomness to your sample plot select even when using a transect. To randomly stratify your sample plots, divide the transect into logical subdivisions given the length of your transect (i.e. every 50 meters for a 500 meter transect or every 10-20 meters for a 100 meter transect) and the pattern you are trying to examine (i.e. if you expect rapid change then perhaps more subdivisions, if you expect slow graduate change, then perhaps fewer subdivisions). Then randomly allocate the sample plots within each subdivision of the transect (see the figure below).
 
 ```{r, out.width="80%", echo = FALSE}
 img <- readJPEG("img/Transect Sampling.jpg")
 grid.raster(img)
 ```
 
-*Quadrat sampling* is a classic tool for the study of ecology, especially biodiversity. It is an important method by which organisms in a certain proportion (sample) of the habitat are counted directly. It is used to estimate population abundance (number), density, frequency and distributions. The quadrat method has been widely used in plant studies. A quadrat is a four-sided figure which delimits the boundaries of a sample plot. The term quadrat is used more widely to include circular plots and other shapes.
+
+### Quadrat sampling
+
+*Quadrat sampling* is a classic tool for the study of ecology, especially biodiversity. It is an important method by which organisms in a certain proportion (sample) of the habitat are counted directly. It is used to estimate population abundance (number), density, frequency and distributions. The quadrat method has been widely used in plant studies. A quadrat is a four-sided figure which delimits the boundaries of a sample plot. However, the term quadrat can be used more widely to include circular plots and other shapes.
 
 The quadrat sampling method has the following assumptions:
-- The number of individuals in each quadrat is counted.
-- The size of the quadrats is known.
-- The quadrat samples are representative of the study area as a whole.
+
+-   The number of individuals in each quadrat is counted.
+
+-   The size of the quadrats is known.
+
+-   The quadrat samples are representative of the study area as a whole.
 
 ```{r, out.width="80%", echo = FALSE}
   img <- readPNG("img/Quadrat ecosystem sampling,h_400,q_80,w_640.png")
@@ -745,17 +771,26 @@ grid.raster(img)
 ```
 
 The pros of quadrat sampling are:
-- The method is easy to use, inexpensive.
-- It is suitable for studying plants, slow-moving animals and faster-moving animals with a small range.
-- It requires the researcher to perform the work in the field.
-- It measures abundance and needed cheap equipment.
 
-Some cons are:
-- Quadrat sampling is not useful for studying very fast-moving animals which are not stay within the quadrat boundaries.
-- There exists biasness in favor of slow moving taxa.
-- Collect only taxa that are present in the sampling time and not buried too deeper in sediment.
-- It is a low estimate of taxonomic richness and assemblage composition.
-- Some animals may experience harm if the scientist collects the population within the quadrat rather than studying it in the field.
+-   The method is easy to use, inexpensive.
+
+-   It is suitable for studying plants, slow-moving animals and faster-moving animals with a small range.
+
+-   It requires the researcher to perform the work in the field.
+
+-   It measures abundance and needed cheap equipment.
+
+Some of the cons are:
+
+-   Quadrat sampling is not useful for studying very fast-moving animals which are not stay within the quadrat boundaries.
+
+-   There exists biasness in favor of slow moving taxa.
+
+-   Collect only taxa that are present in the sampling time and not buried too deeper in sediment.
+
+-   It is a low estimate of taxonomic richness and assemblage composition.
+
+-   Some animals may experience harm if the scientist collects the population within the quadrat rather than studying it in the field.
 
 A nice summary of sampling approaches can be found in the figure below
 
@@ -763,6 +798,9 @@ A nice summary of sampling approaches can be found in the figure below
 img <- readJPEG("img/area-sampling-1024x958.jpeg")
 grid.raster(img)
 ```
+
+
+### Purposive sampling
 
 *Purposive sampling* is a non-probabilistic sampling process in which a researcher selects a specific group of individuals or units for analysis because they have characteristics that are needed in the sample. This method is appropriate when the researcher has a clear idea of the characteristics or attributes they are interested in studying and wants to select a sample representative of those characteristics. So, units are not selected by a random process, but "on purpose". 
 
