@@ -486,7 +486,7 @@ Let's assume that the 23581 whales reported in the dataset are the population of
 
 ```{r sample_ui, context="render",echo=FALSE}
 
-  sliderInput("n_sample",label = "Sample Size",min = 5,max=500,value = 50,step = 5)
+  sliderInput("n_sample",label = "Sample Size",min = 5,max=500,value = 10,step = 5)
  sliderInput("conf_level",label = "Confidence Level",min = 0.5,max=0.999,value = 0.95,step = 0.001)
   actionButton("go2","Make New Sample!")
   selectInput("type",label="Plot Type",choices = c("violin","errorbar"))
@@ -553,12 +553,12 @@ output$ci_plot<-renderPlot({
        p1<-  ggplot(plt_dt,aes(x=1,y=Mean,ymax=Mean+qnorm(1-((1-as.numeric(input$conf_level))/2))*SE,
                 ymin=Mean-qnorm(1-((1-as.numeric(input$conf_level))/2))*SE))+
          geom_point()+
-     geom_errorbar(width=0.05)+
+     geom_errorbar(width=0.15)+
      scale_y_continuous(limits=c(min(c(plt_dt$Mean-qnorm(1-((1-as.numeric(input$conf_level))/2))*plt_dt$SE,10)),
                                  max(c(plt_dt$Mean+qnorm(1-((1-as.numeric(input$conf_level))/2))*plt_dt$SE,17))))+
-          annotate(geom="point",y=mean(Whale$length.m.),x=1, size=4,col="red")+
-            annotate(geom="point",y=mean(Whale$length.m.),x=1, size=4,col="red")+
-          scale_x_continuous(breaks=1,labels=c("Sample"))+
+          geom_hline(yintercept=mean(Whale$length.m.),linetype=2,col="red")+
+          scale_x_continuous(breaks=1,labels=c("Sample"),limits=c(0.99,1.01))+
+         xlab("")+ylab("Mean Length")+
           ggtitle(paste0(whale_sample$label," samples\n",scales::percent(input$conf_level,0.1)," Confidence Level"))+
     theme(axis.text = element_text(size=16),title=element_text(size=20))
      }
@@ -608,7 +608,10 @@ whale_summary2<-Whale %>%
 output$cumulative_ci_plot<-renderPlot({
   
   p1<-ggplot(whale_summary2)+
-    geom_hline(aes(yintercept=Mean),col="blue")
+    geom_hline(aes(yintercept=Mean),col="blue")+
+     plot_theme+
+     xlab("Sample Number")+ylab("Length (m)")+
+     labs(colour="Includes true population mean?")
   
  if(length(whale_sample2$sample)>0){
 
@@ -629,8 +632,9 @@ output$cumulative_ci_plot<-renderPlot({
                                  max(samples$mean)+3.5*max(samples$se)))+
      scale_color_manual(values=c("FALSE"="red","TRUE"="black"))+
      ggtitle("95% Confidence Intervals")+
-     theme_light()+
-     labs(colour="Includes true value?")
+     plot_theme+
+     xlab("Sample Number")+ylab("Length (m)")+
+     labs(colour="Includes true population mean?")
    
  }
   print(p1)
