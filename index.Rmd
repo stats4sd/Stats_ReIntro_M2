@@ -56,25 +56,25 @@ Whale %>%
 
 ## Introduction
 
-In this second workbook, we are going to be taking a closer look at sampling and estimation.
+In this second workbook, we will be taking a closer look at sampling and estimation.
  
-Sampling consists of selecting some part of a population to observe, so one may estimate something about the whole population, or infer and test hypothesis about the population characteristics, or fit models that explain or predict some population outcome. In this workbook we are going to discuss some general ideas about sampling and their relationship to estimation. In Workbook 3 we are going to discuss inference and hypothesis testing and in Module 4 and 5 model fitting.
+Sampling consists of selecting some part of a population to observe, so one may estimate something about the whole population, or infer and test hypotheses about the population characteristics, or fit models that explain or predict some population outcome. In this workbook we are going to discuss some general ideas about sampling and their relationship to estimation. In Workbook 3 we will discuss inference and hypothesis testing and in Module 4 and 5 model fitting.
 
-As an example of sampling for estimation, in order to estimate the amount of lichen available as food for caribou, a biologists collects lichen from selected small plots within the study area. Based on the dry weight of the sample collected, the available amount of food for the whole region can be estimated. Similarly, to estimate the average weight of the individuals of a bird species, some individuals are captured, weighted (and released) and based on these measurements, the average weight of the individuals can be estimated.
+As an example of sampling for estimation, in order to estimate the amount of lichen available as food for caribou, a biologist collects lichen from selected small plots within the study area. Based on the dry weight of the sample collected, the available amount of food for the whole region can be estimated. 'Similarly, to estimate the average weight of a bird species, some individuals are captured, weighed (and released), and the average weight is estimated based on these measurements..
 
 Sampling is the process used to collect the data, estimation uses the sampled data to provide an estimate of a population parameter (that is unknown) using such data.   
 
 In this session we will cover:
 
--   What is sampling and what are the desirable properties of a good sampling scheme
+-   What sampling is and what the desirable properties of a good sampling scheme are 
 
 -   The definition and some examples of the two types of errors that we will find when using sampled data to estimate population characteristics
 
 -   The basic sampling scheme, the Simple Random Sampling, the estimation of population characteristics under this scheme and the computation of Confidence Intervals
 
--   Finally, we will review some of the most commons sampling strategies used in environmental sciences.
+-   Finally, we will review some of the most common sampling strategies used in environmental sciences.
 
-In these workbooks all output produced will come from the use of R, and all of the code used in the workbooks can be found on GitHub here: <https://github.com/stats4sd/Stats_ReIntro_M2>. But the principles are identical regardless of which data analysis tool is being used. Whichever tool is being used for data analysis - it will require that the user is familiar enough with it to be able to generate any sort of summary and compute precision measures such as a confidence interval!
+In these workbook, all output produced will come from the use of R, and all of the code used can be found on GitHub here: <https://github.com/stats4sd/Stats_ReIntro_M2>. However, the principles are identical regardless of which data analysis tool is being used. Whichever tool is being used for data analysis - it will require that the user is familiar enough with it to be able to generate any sort of summary and compute precision measures such as a confidence interval!
 
 ## Data being used in this workbook
 In this session we are going to use a public dataset produced by the Ocean Biodiversity Information system (OBIS). It contains the Historic whale catch records from Australian whaling stations (1925-1978). The full data set and other details can be found here <https://obis.org/dataset/43e4c2cc-5886-427f-a4a9-d47d2635d246>. It contains 38267 records, but we will use a subset: the data corresponding to the most common caught whale, the Humpback (Megaptera novaeangliae), that contains 23581 records. 
