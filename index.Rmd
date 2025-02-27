@@ -129,11 +129,11 @@ Let's try to identify the key concepts in this process:
 
 The procedure by which the sample of units is selected from the population is called *Sampling*. Sample units are then observed and some characteristic is measured. The sample will consist of these measurements along with other information that may allow the identification of each unit.
 
-We will, then, use this sample data to estimate some population characteristic. But, while the population characteristic remains fixed, its estimate depends on which sample is selected. Therefore, different samples from the same population will produce different estimates of the same population characteristic. 
+We will, then, use this sample data to estimate some population characteristic. However, while the population characteristic remains fixed, its estimate depends on which sample is selected. Therefore, different samples from the same population will produce different estimates of the same population characteristic. 
 
-There are two desirable characteristics of the estimates than can be controlled when we design the sampling scheme:
+There are two desirable characteristics of the estimates that can be controlled when we design the sampling scheme:
 
--   *being unbiased*: the estimates are targeting the true (but unknown) population value, possibly the estimate won't have same value as the population value, but will be "around" it, close to it. This is achieved obtaining *representative samples* by selecting the units in the sample randomly (or, at least, with some degree of randomness), using probabilistic sampling methods.
+-   *being unbiased*: the estimates are targeting the true (but unknown) population value. The estimate may not have the exact same value as the population value, but will be close to it, or "around" it. This is achieved obtaining *representative samples* by selecting the units in the sample randomly (or, at least, with some degree of randomness), using probabilistic sampling methods.
 
 -   *The precision* of the estimate: how close we expect our estimate to be with respect to the true population value, the closer it is, the more precise the estimate. Precision is controlled with the sample size, the larger the sample size, the greater the precision of the estimate.
 
@@ -141,30 +141,30 @@ The picture below shows the two concepts of precision and bias.
 
 ![](https://upload.wikimedia.org/wikipedia/commons/d/d6/LT_accuracy.png){#id .class width=75% height=75%}
 
-Each dot represents an estimate obtained from one sample and the bull's eye the population characteristic of interest.
+Each dot represents an estimate obtained from one sample, and the bull's eye the population characteristic of interest.
 
 -   The top row shows biased results, as they are not aiming the target (the bull's eye)
 
--   The bottom row shows un-biased results, aiming at the right target
+-   The bottom row shows unbiased results, aiming at the right target
 
--   The column at the left shows results with little precision, scattered around the target, either when biased or not.
+-   The left-hand column shows results with little precision, scattered around the target, whether biased or not.
 
--   The column at the right shows results with great precision, concentrated on the target, either when biased or not.
+-   The right-hand column shows results with great precision, concentrated on the target, whether biased or not.
 
-The problem, however, is that we usually don't know the actual value of the population characteristic, and that we have only one sample!
+The problem, however, is that we usually do not know the actual value of the population characteristic, and that we have only one sample!
 
-A quick an easy way to look at this is obtaining the mean of samples of the result of rolling a dice. Let's assume the dice is perfectly balanced, if it weren't we would obtain biased estimates. When the dice is perfectly balanced we know what we expect to obtain:
+A quick and easy way to look at this is obtaining the mean of samples from the result of rolling a dice *n* times. Let's assume the dice is perfectly balanced, if it weren't we would obtain biased estimates. When the dice is perfectly balanced we know what we expect:
 
--   the proportion of 1's, 2's, 3's,... should be approximately the same, and approximately 1/6 or 16,67%
+-   the proportion of 1s, 2s, 3s,... should be approximately the same, and approximately 1/6 or 16.67%
 
--   the average of the result of rolling N dices will be close to 3.5
+-   the average of the result of rolling N dice will be close to 3.5
 
 
-Once you select below the number of dices, N, you will obtain a new random sample. We can use this sample to estimate the probability to obtain a result (say, a "six") and the population average.
-We will use the new sample mean as the new population mean estimate and the proportion of "six" in the sample as the estimate of the probability of obtaining a "six".
-By generating repeated samples you will observe that they are probably not equal to the expected average (3.5) but a value that sometimes is greater than 3.5 and sometimes smaller than 3.5, with the occasional result equal to 3.5. This highlights the idea of an unbiased estimate, as it is targeting (with some error) the true population value of 3.5, and the idea of precision, as the estimate will rarely be the actual population value, and we can observe how far is from it. 
+Once you select below the number of dice, N, you will obtain a new random sample. We can use this sample to estimate the probability to obtaining a result (for example, a "six") and the population average.
+We will use the new sample mean as the new population mean estimate and the proportion of "sixes" in the sample as the estimate of the probability of obtaining a "six".
+By generating repeated samples, you will observe that their averages are probably not equal to the expected mean (3.5) but sometimes greater than 3.5, sometimes smaller, and occasionally exactly 3.5. This highlights the concept of an unbiased estimate, as it targets (with some error) the true population value of 3.5, and the concept of precision, as the estimate will rarely match the actual population value, allowing us to observe how far it is from it.. 
 
-Now, let's change the sample size, for example n=100 or n=1000. You will observe how the sample mean still varies each time, but deviates less from the true value of 3.5. The same happens with the proportion of "six", the larger the sample size, the closer it is to 16.67%. 
+Now, let's change the sample size, for example n=100 or n=1000. You will observe how the sample mean still varies each time, but deviates less from the true value of 3.5. The same happens with the proportion of "sixes", the larger the sample size, the closer it is to 16.67%. 
 
 ```{r dice_ui, context="render",echo=FALSE}
 
@@ -202,7 +202,7 @@ aes(label = paste(after_stat(count),"\n",
 
 The beauty of using simulations is that you already know what you should obtain, and therefore you can compare the results of your simulation with the expected result.
 
-What happens if you roll an unfair dice, one that has 2 sixes, and therefore one of the values one to five is no longer in the dice? If the population average result is 3.5 for fair dices, it will be different for this unfair dice. The proportion of sixes with a fair dice will be 1/6=16.67%, this will change now with the unfair dice. Roll it a few times and see what happens. Can you guess which value was removed to introduce the second six? 
+What happens if you roll an unfair dice, one that has 2 sixes, and therefore one of the values one to five is no longer in the dice? If the population average result is 3.5 for fair dice, it will be different for this unfair dice. The proportion of sixes with a fair dice is 1/6=16.67%, this will change now with the unfair dice. Roll it a few times and see what happens. Can you guess which value was removed to introduce the second six? 
 You can also observe how the precision increases as the sample size increases.
 
 ```{r dice_ui2, context="render",echo=FALSE}
@@ -293,24 +293,24 @@ The sampling error comes from the fact that just a part of the population is inc
 
 The non-sampling errors come from all other fronts:
 
--   the sample is not representative, for example in a fish survey some selected sites may not be observed due to rough weather conditions; sites farthest from shore are the most typical to have such weather problems, 
+-   the sample is not representative, for example, in a fish survey some selected sites may not be observed due to rough weather conditions; sites farthest from shore are most likely to experience such weather problems, 
 
 -   not measuring all the sample units, for example a non-response in a survey or an animal or plant that dies.
 
 -   measuring the characteristic with measurement or recording error. For example, in the Humpback dataset, there are 31 whales with length = 0, or misrecording a whale with actual length = 12.79m as 17.29m.
 
--   when dealing with humans, response bias is a source of non-sampling errors. It happens when a number of different conditions or factors may cue respondents to provide inaccurate or false answers during surveys or interviews. For example, a professor is asking their students whether they have ever cheated on exams in his class, the participants are not likely to respond truthfully; instead their responses are biased toward responses that are expected from them.
+-   when dealing with humans, response bias is a source of non-sampling errors. It happens when a number of different conditions or factors may cue respondents to provide inaccurate or false answers during surveys or interviews. For example, a professor asks their students whether they have ever cheated on exams in their class, the participants are unlikely to respond truthfully; instead, their responses are likely to be biased toward what they think is expected of them.
 
 
-The non-sampling error affects the accuracy of the estimates, and are the cause of bias.
+The non-sampling error affects the accuracy of the estimates, and is the cause of bias.
 
-Non-sampling errors are unavoidable, but they can be reduced being careful during design and data collection stages:
+Non-sampling errors are unavoidable, but they can be reduced by being careful during design and data collection stages:
 
--   At planning stage, all potential non-sampling errors are listed and steps taken to minimise them are considered. You should establish a sensible data quality assurance system.
+-   At the planning stage, all potential non-sampling errors are listed and steps taken to minimise them are considered. You should establish a sensible data quality assurance system.
 
--   Critically view the data collected and attempt to resolve queries immediately they arise.
+-   Critically review the data collected and attempt to resolve queries immediately they arise.
 
--   Document sources of non-sampling errors so that results presented can be interpreted meaningfully.
+-   Document sources of non-sampling errors so that the results presented can be interpreted meaningfully.
 
 -   If data are collected by others, ensure you understand the data collection process and the quality assurance system that was put in place before you decide to use the data.
 
@@ -341,11 +341,11 @@ But even when a sampling frame is not available, random sampling can sometimes b
 
 In the previous sections we have seen what happens when we take several samples from the same population. However, in a research study we usually can get just one sample, so we have to make most of it. 
 
-Simple Random Sampling (SRS) is the probabilistic sampling design in which every unit in the population has exactly the same probability to be selected. It is the most efficient sampling design, as it provides the most precise estimates of the population characteristic for a given sample size, and these estimates are unbiased.
+Simple Random Sampling (SRS) is the probabilistic sampling design in which every unit in the population has exactly the same probability of being selected. It is the most efficient sampling design, as it provides the most precise estimates of the population characteristic for a given sample size, and these estimates are unbiased.
 
-The winning numbers of the lotto, the result of rolling a dice or tossing a coin are examples of simple random sampling, as we know beforehand that all the possible outcomes have exactly the same probability. We can extract a Simple Random Sample of whales from our dataset by allocating the same probability to be selected to each whale. 
+The winning numbers of the lottery, the result of rolling a dice or tossing a coin are examples of simple random sampling, as we know beforehand that all the possible outcomes have exactly the same probability. We can extract a Simple Random Sample of whales from our dataset by allocating the same probability of being selected to each whale. 
 
-Unfortunately, not always it is possible to use this sampling plan. We will discuss later, in the *Sampling strategies in environmental sciences* section, other options when SRS is not possible or economically inefficient.
+Unfortunately, it is not always possible to use this sampling plan. We will discuss later, in the *Sampling strategies in environmental sciences* section, other options when SRS is not possible or economically inefficient.
 
 
 
@@ -361,21 +361,21 @@ In a Simple Random Sampling scheme, *the best estimate* for the
 
 The estimate is *best* because it is unbiased and with maximum precision. 
 
-These estimates provide a single value for the population characteristic, they are known as the point estimates. If the SRsampling has been conducted properly we can expect no biases. However, as we saw previously in the sample obtained by rolling a dice several times, they are not (in general) equal to the population value, sometimes they are going to be greater than it, sometimes smaller, and in a very few cases, and just by random chance, equal to sample mean.
+These estimates provide a single value for the population characteristic, they are known as the point estimates. If the SRS has been conducted properly, we can expect no biases. However, as we saw previously in the sample obtained by rolling a dice several times, they are not (in general) equal to the population value. Sometimes they will be greater than it, sometimes smaller, and in very few cases, and just by random chance, equal to the sample mean.
 
-We, therefore, would like to know how precise our estimate is, how close it is to the population value. So we add to the point estimate a measure of precision of it. There are different ways of computing this degree of precision (or uncertainty):
+We, therefore, would like to know how precise our estimate is, how close it is to the population value. So we add to the point estimate a measure of its precision. There are different ways of computing this degree of precision (or uncertainty):
 
 -   *standard error* (usually used for means or variances)
 
 -   *margin of error* (usually used for proportions)
 
--   *confidence interval* (used by both: means, variances and proportions).
+-   *confidence interval* (used for means, variances and proportions).
 
 All of them are related, so if you know one of them you can easily obtain the other two. For example, a possible margin of error is calculated as: Margin of error = 2 × standard error. We will discuss the confidence interval in the next sub-section.
 
-Note that we use the term *error* to measure the degree of precision/uncertainty in or estimates.
+Note that we use the term *error* to measure the degree of precision/uncertainty in our estimates.
 
-If we obtain *k* samples of *n* units each from the same population, and compute the mean of each sample, we will have *k* estimates of the population mean (and the same applies for the variance or the proportion, when applicable), as their means will vary from one sample to another. Like the series of observations in each sample, the sample of *k* sample means has a standard deviation. The standard error of the mean of one sample is an estimate of the standard deviation that would be obtained from the means of a large number of samples drawn from that population.
+If we obtain *k* samples of *n* units each from the same population, and compute the mean of each sample, we will have *k* estimates of the population mean (and the same applies to the variance or the proportion, when applicable), as their means will vary from one sample to another. Like the series of observations in each sample, the sample of *k* sample means has a standard deviation. The standard error of the mean of one sample is an estimate of the standard deviation that would be obtained from the means of a large number of samples drawn from that population.
  
 One of the interesting characteristics of the three precision/uncertainty measures above is that they depend on the sample size *n*. Specifically, they are a function of *1/sqrt(n)* where *n* is the sample size. Therefore, the larger the sample size, the more reduced will the uncertainty measures of the estimates be. However, the gain in precision is big when we increase a small sample by one unit, but this gain will decrease as the sample size increases. 
 
@@ -385,7 +385,7 @@ The figure below shows how the standard error (SE) of the mean varies with the s
 readRDS("Data/stderr.vs.ssPlot.RDS") %>% print()
 ```
 
-Since the precision of our estimate depends on the sample size, it can be established at design stage, before we collect the data provided that we have some prior information. We will need an estimate of the population
+Since the precision of our estimate depends on the sample size, it can be established at the design stage, before we collect the data, provided that we have some prior information. We will need an estimate of the population
 
 -   variance/standard deviation to obtain the SE of the mean: SE=std(y)/sqrt(n)
 
@@ -393,13 +393,13 @@ Since the precision of our estimate depends on the sample size, it can be establ
 
 from previous data or knowledge.
 
-It is important to realise that we do not have to take repeated samples in order to estimate the standard error, there is sufficient information within a single sample. 
+It is important to realise that we do not have to take repeated samples in order to estimate the standard error; there is sufficient information within a single sample. 
 
-An interesting result of this is that the sample size depends on the precision you would like to achieve (or that the precision of your estimates will depend on the sample size), but it does not depend on the population size, provided that your population is large enough. The sample size is a figure, not a percentage!!
-For small populations, and small here means up to some hundreds, a correction applies, so to achieve a certain precision we won't need sample sizes greater than the population size!
+An interesting result of this is that the sample size depends on the precision you would like to achieve (or that the precision of your estimates depends on the sample size), but it does not depend on the population size, provided that your population is large enough. The sample size is a figure, not a percentage!!
+For small populations (and 'small' here means up to a few hundred) a correction applies, so to achieve a certain precision we won't need sample sizes greater than the population size!
 
 
-### Confidence Interval
+## Confidence Interval
 
 *A confidence interval gives an indication of the degree of uncertainty of an estimate and helps to decide how precise a sample estimate is*. It specifies a range of values likely to contain the unknown population value. These values are defined by lower and upper limits, and the probability that the Confidence Interval includes the true population value is given by the confidence level.
 
