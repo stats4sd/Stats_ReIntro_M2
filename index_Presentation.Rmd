@@ -1,0 +1,582 @@
+---
+title: "Module 2 - Sampling and Estimation"
+output: 
+  learnr::tutorial:
+    css: css/style.css
+runtime: shiny_prerendered
+description: > 
+  Sampling and Estimation Module for the 2025 Envision course
+editor_options: 
+  markdown: 
+    wrap: 72
+  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+library(tidyverse)
+library(shiny)
+library(gt)
+library(plotly)
+library(png)
+library(jpeg)
+library(grid)
+
+Whale<-read.csv("Data/Humpback.csv") %>% filter(length.m.>0)
+Whale$sex<-factor(Whale$sex, levels = c("Male", "Female", "Hermaphrodite", "Unknown"))
+
+choices<-c("Boxplot"="boxplot",
+"Histogram"="histogram",
+"Density Plot"="density")
+
+
+plot_theme<-theme_light()+
+  theme(plot.title=element_text(face =2,size=18),
+        axis.title=element_text(face =2,size=14),
+        plot.subtitle=element_text(face =3,size=14),
+        axis.text=element_text(face =1,size=12),
+        strip.text=element_text(face =1,size=12))
+
+
+Whale %>%
+  ungroup() %>%
+      summarise("Number of whales"=n(),
+                "Mean length"=mean(length.m.)%>%round(1),
+                "Median length"=median(length.m.)%>%round(1),
+                "Minimum"=min(length.m.)%>%round(1),
+                "Maximum"=max(length.m.)%>%round(1),
+                "Range"=(max(length.m.)-min(length.m.))%>%round(1),
+                "Standard Deviation"=sd(length.m.)%>%round(1),
+                "Variance"=var(length.m.)%>%round(),
+                )%>%
+  gather(Statistic,Value) ->table_stat
+```
+
+
+
+## Data being used in this workbook
+In this session we are going to use a public dataset produced by the Ocean Biodiversity Information system (OBIS). It contains the Historic whale catch records from Australian whaling stations (1925-1978). The full data set and other details can be found here <https://obis.org/dataset/43e4c2cc-5886-427f-a4a9-d47d2635d246>. It contains 38267 records, but we will use a subset: the data corresponding to the most common caught whale, the Humpback (Megaptera novaeangliae). 
+
+
+
+## Population and Sample
+
+we call *Population* the entire group of individuals to which findings of the study are to be extrapolated. 
+
+The individual members of the population whose characteristics are to be measured are the *units* of the population.
+The units can be, basically, anything: people, individual birds of a given species, ground plots, plants, individuals of an animal species, households, hospitals, schools or business. 
+
+Examples of characteristics that we can measure in populations are the proportion of male/female, or the proportion of given subspecies (proportion of Humpback whales among the population of whales), or the average height or diameter in trees or the average length of the population of Humpback whales.
+
+The population must be fully defined so that the inclusion and exclusion criteria are clearly stated.  
+For example, we can define our population of whales as all whales in the world, or just Humpback whales, or female Humpback whales, or female Humpback whales in the Australia shores, or ... We can define a population as the trees of a given species in a single area of a forest, or in the whole forest, or across a region of a country, or in the whole country, or .... 
+The less strict the inclusion criteria, the larger the variability, the stricter the criteria, the more homogeneous the populaton will be, but also the smaller the population we can make generalisations from our sample. 
+
+Although a researcher should clearly define the population he or she is dealing with, they may not be able to enumerate it exactly. For instance, in ordinary usage the population of England denotes the number of people within England’s boundaries, perhaps as enumerated at a census. But people die and are born continuously, some people may leave the country whereas others may come from abroad to live in. Defining the population is not always straightforward.
+
+### Sample
+
+Although we would like to know the value of certain characteristics of the population, we can't measure all the units, because of time and budget constrains, but also because sometimes the process of measurement affects, even kills or destroys, the unit, and therefore we are not supposed to do this for the whole population. 
+
+Therefore, we usually select a subset (the *Sample*) from the original population and observe/measure all the units in it, and use this to get an *Estimate* of the population value or answer questions about the population value. A well chosen sample will contain most of the information about a particular population characteristic. 
+
+### Sampling Units
+
+With many populations, it is straightforward to identify the types of units to be sampled and conceive a list or *frame* of the units in the population, regardless the practical problems of obtaining the frame or observing the selected sample. A complete list of the units in the target population would provide and ideal frame from which the sample units could be selected. 
+
+In practice, it is often difficult to obtain a list that corresponds exactly to the population of interest.
+
+
+The image below is is a close-up of the sample tube on the ground corresponding to the seventh sample collected by the NASA’s Perseverance Rover in Mars. Perseverance has been taking duplicate samples from each rock target the mission selects. 
+ Martian rock and regolith (broken rock and dust).
+
+<https://science.nasa.gov/mission/mars-2020-perseverance/>
+
+![12th Perseverance Rock Sample Bearwallow on Three Forks Sample Depot:https://commons.wikimedia.org/wiki/File:12th_Perseverance_Rock_Sample_Bearwallow_on_Three_Forks_Sample_Depot.png](https://upload.wikimedia.org/wikipedia/commons/4/47/12th_Perseverance_Rock_Sample_Bearwallow_on_Three_Forks_Sample_Depot.png)
+
+
+
+## Basic Ideas of Sampling and Estimation
+
+The procedure by which the sample of units is selected from the population is called *Sampling*. Sample units are then observed and some characteristic is measured. The sample will consist of these measurements along with other information that may allow the identification of each unit.
+
+We will, then, use this sample data to estimate some population characteristic. But, while the population characteristic remains fixed, its estimate depends on which sample is selected. There are two desirable characteristics of the estimates than can be controlled when we design the sampling scheme:
+-   The precision of the estimate: how close we expect our estimate to be with respect to the true population value, the closer it is, the more precise the estimate. Precision is controlled with the sample size, the larger the sample size, the greater the precision of the estimate.
+
+*EXAMPLE DICE 1*
+
+-   being unbiased: the estimates are targeting the true (but unknown) population value, possibly the estimate won't have same value as the population value, but will be "around" it, close to it. This is achieved obtaining *representative samples* by selecting the units in the sample randomly (or, at least, with some degree of randomness), using probabilistic sampling methods.
+
+*EXAMPLE DICE 2*
+
+The picture below shows the two concepts of precision and bias.
+
+![](https://upload.wikimedia.org/wikipedia/commons/d/d6/LT_accuracy.png){#id .class width=75% height=75%}
+
+Each dot represents an estimate obtained from one sample and the bull's eye the population characteristic of interest.
+
+-   The top row shows biased results, as they are not aiming the target (the bull's eye)
+
+-   The bottom row shows un-biased results, aiming at the right target
+
+-   The column at the left shows results with little precision, scattered around the target, either when biased or not.
+
+-   The column at the right shows results with great precision, concentrated on the target, either when biased or not.
+
+The problem, however, is that we usually don't know the actual value of the population characteristic, and that we have only one sample!
+
+A quick an easy way to look at this is obtaining the mean of samples of the result of rolling a dice. Let's assume the dice is perfectly balanced, if it weren't we would obtain biased estimates. In this case, we know what we expect to obtain:
+
+-   the proportion of 1's, 2's, 3's,... should be approximately the same, and approximately 1/6 or 16,67%
+
+-   the average of the result of rolling N dices will be close to 3.5
+
+
+Once you select below the number of dices, N, you will obtain a new random sample. We can use this sample to estimate the probability to obtain a result (say, a "2") and the population average.
+We will use the new sample mean as the new population mean estimate and the proportion of "2" in the sample as the estimate of the probability of obtaining a "2".
+By generating repeated samples you will observe that they are probably not equal to the expected average (3.5) but a value that sometimes is greater than 3.5 and sometimes smaller than 3.5, with the occasional result equal to 3.5. This highlights the idea of an unbiased estimate, as it is targeting (with some error) the true population value of 3.5, and the idea of precision, as the estimate will rarely be the actual population value, and we can observe how far is from it. 
+
+Now, let's change the sample size, for example n=100 or n=1000. You will observe how the sample mean still varies each time, but deviates less from the true value of 3.5. The same happens with the proportion of "2", the larger the sample size, the closer it is to 16.67%. 
+
+```{r dice_ui, context="render",echo=FALSE}
+
+  sliderInput("n_dice",label = "Number of dice rolls",min = 0,max=1000,value = 10,step = 5)
+  actionButton("go","Roll Dice!")
+  plotOutput("plot_results")
+
+```
+
+```{r dice_server,context="server"}
+
+ dice<-reactiveValues(value=NULL)
+
+  observeEvent(input$go,{
+ dice$value<-data.frame(roll=sample(1:6, size= as.numeric(input$n_dice), replace=TRUE))
+  })
+
+output$plot_results<-renderPlot({
+ if(!is.null(dice$value)){
+ggplot(dice$value,aes(x=roll))+
+    geom_bar()+
+      ggtitle(paste("Mean Value =",round(mean(dice$value$roll),2)))+
+   scale_x_continuous(labels=1:6,breaks=1:6,limits=c(0.5,6.5))+
+    theme(axis.text = element_text(size=16),title=element_text(size=20))
+}
+})
+
+
+```
+
+The beauty of using simulations is that you already know what you should obtain, and therefore you can compare the results of your simulation with the expected result.
+
+What happens if you roll an unfair dice, one that has 2 sixes, and therefore one of the values one to five is no longer in the dice? If the population average result is 3.5 for fair dices, it will be different for this unfair dice. The proportion of sixes with a fair dice will be 1/6=16.67%, this will change now with the unfair dice. Roll it a few times and see what happens. Can you guess which value was removed to introduce the second six? 
+You can also observe how the precision increases as the sample size increases.
+
+```{r dice_ui2, context="render",echo=FALSE}
+
+  sliderInput("n_dice2",label = "Number of dice rolls",min = 0,max=1000,value = 10,step = 5)
+ selectInput("fair",label = "Select Dice Type",choices=c("Fair","Unfair (2 Sixes)"="Unfair"))
+  
+  actionButton("go_x","Roll Dice!")
+  actionButton("reset2","Start over")
+  plotOutput("plot_results2")
+
+```
+
+
+
+```{r dice_server2,context="server"}
+
+ dice2<-reactiveValues(value=data.frame(type=NULL,mean=NULL,n=NULL,sixes=NULL),i=0)
+
+observeEvent(input$reset2,{
+  dice2$value<-data.frame(type=NULL,mean=NULL,n=NULL,sixes=NULL)
+  dice2$i<-0
+})
+
+  observeEvent(input$go_x,{
+   if(input$fair=="Fair"){probs<-rep(1,6)}
+    else{probs<-c(1,1,0,1,1,2)}
+  
+   d1<-data.frame(type=input$fair,roll=sample(1:6, size= as.numeric(input$n_dice2),
+                                    prob= probs, replace=TRUE)) %>%
+     group_by(type) %>%
+      summarise(mean=mean(roll),n=n(),sixes=mean(roll==6))
+    
+ dice2$value<-rbind(dice2$value,d1)
+ dice2$i<-dice2$i+1
+
+ 
+  })
+
+output$plot_results2<-renderPlot({
+  if(dice2$i>0){
+
+  
+p1<-ggplot( dice2$value,aes(x=mean,y=sixes,fill=n,shape=type))+
+annotate(geom="point",x=3.5,y=1/6,col="red",size=10)+
+  annotate(geom="point",x=3.5,y=1/6,col="red",size=30,shape=1)+
+    annotate(geom="point",x=3.5,y=1/6,col="red",size=60,shape=1)+
+    annotate(geom="point",x=3.5,y=1/6,col="red",size=100,shape=1)+
+  geom_point(size=5)+
+  scale_y_continuous(limits=c(0,0.5),labels=scales::percent)+
+  scale_x_continuous(limits=c(2,5))+
+  scale_fill_distiller(palette="BuGn",limits=c(1,1000))+
+  theme_light()+
+  scale_shape_manual(values=c(21,22))+
+    theme(axis.text = element_text(size=16),title=element_text(size=20))+
+  labs(x="Mean",y="% Sixes")
+  }else{
+p1<- ggplot( dice2$value)+
+annotate(geom="point",x=3.5,y=1/6,col="red",size=10)+
+  annotate(geom="point",x=3.5,y=1/6,col="red",size=30,shape=1)+
+    annotate(geom="point",x=3.5,y=1/6,col="red",size=60,shape=1)+
+    annotate(geom="point",x=3.5,y=1/6,col="red",size=100,shape=1)+
+  scale_y_continuous(limits=c(0,0.5),labels=scales::percent)+
+  scale_x_continuous(limits=c(2,5)) +
+    scale_shape_manual(values=c(21,22))+
+  scale_fill_distiller(palette="BuGn",limits=c(1,1000))+
+    theme_light()+
+    theme(axis.text = element_text(size=16),title=element_text(size=20))+
+  labs(x="Mean",y="% Sixes")
+}
+p1
+})
+
+
+```
+
+You may have observed that the expected mean for the unfair dice is 4 or very close to 4. This tells us that the number that was removed from the dice to include the second six was the three.
+
+
+## Sampling and non-sampling errors
+One sample is selected at random but other potential samples could have been selected, which may have produced different results. The difference between a statistic derived from a sample and the (unknown) population value is caused by what are known as the sampling and non-sampling errors. These errors are inevitable and, despite its name, "error", it doesn't mean necessarily that we have done something wrong or made a mistake. 
+
+The sampling error comes from the fact that just a part of the population is included in the sample, and therefore the estimate will (most likely) be different from the population value. The sampling error affects the precision of the estimate. We will always have sampling error, it's inevitable, but we know how to handle it. See below in the Estimation section to understand what this means.
+
+The non-sampling errors come from all other fronts:
+
+-   the sample is not representative, for example in a fish survey some selected sites may not be observed due to rough weather conditions; sites farthest from shore are the most typical to have such weather problems, 
+
+-   not measuring all the sample units, for example a non-response in a survey or an animal or plant that dies.
+
+-   measuring the characteristic with measurement or recording error. For example, in the Humpback dataset, there are 31 whales with length = 0, or misrecording a whale with actual length = 12.79m as 17.29m.
+
+-   when dealing with humans, response bias is a source of non-sampling errors. It happens when a number of different conditions or factors may cue respondents to provide inaccurate or false answers during surveys or interviews. For example, a professor is asking their students whether they have ever cheated on exams in his class, the participants are not likely to respond truthfully; instead their responses are biased toward responses that are expected from them.
+
+
+The non-sampling affect the accuracy of the estimates, and are the cause of bias.
+
+Non-sampling errors are unavoidable, but they can be reduced being careful during design and data collection stages:
+
+Designing a sample using a scientific approach can help to minimise sampling error and create estimates that are precise and unbiased.
+
+## Probabilistic and non-probabilistic sampling
+
+Sampling methods can be categorised into two very broad classes on the basis of how the sample was selected: probabilistic and non-probabilistic sampling. 
+
+In a probabilistic sampling scheme, every element in the population has a known, non-zero probability of being included in the sample. A non-probabilistic sampling plan doesn't have this feature.
+
+In probabilistic sampling, because every element has a known chance of being selected, we can obtain unbiased estimates of the population characteristics of interest, and we can also know their precision. 
+
+To accomplish this we need some list of all the population units from which the sample can be selected. This list is called a *Sampling Frame* and should have the property that every element in the population has some chance of being selected in the sample by whatever method is used to select elements from the sampling frame.
+
+Ideally, a sampling frame should be a complete list of all members of the target population. In reality, however, this is rarely the case in the environmental sciences.
+
+
+Non-probabilistic sampling, on the other hand, does not have this feature, and we don't have a firm method of assessing either the reliability nor the validity of the resulting estimates. 
+
+In the coming sections we are going to describe some of the most popular sampling methods in environmental sciences.
+
+
+## Basic Sampling: Simple Random Sampling
+
+In the previous sections we have seen what happens when we take several samples from the same population. However, in a research study we usually can get just one sample, so we have to make most of it. 
+
+Simple Random Sampling (SRS) is the probabilistic sampling design in which every unit in the population has exactly the same probability to be selected. It is the most efficient sampling design, as it provides the most precise estimates of the population characteristic for a given sample size, and these estimates are unbiased.
+
+The winning numbers of the lotto, the result of rolling a dice or tossing a coin are examples 
+
+
+
+## Estimation
+
+In a SRS, *the best estimate* for the 
+
+-   *population mean* is the sample mean
+
+-   *population variance* is the sample variance
+
+-   *population proportion (or probability)* is the sample proportion.
+
+The estimate is *best* because it is unbiased and with maximum precision. 
+
+These estimates provide a single value for the population characteristic, they are known as the point estimates. If the SRsampling has been conducted properly we can expect no biases. However, as we saw previously in the sample obtained by rolling a dice several times, they are not (in general) equal to the population value, sometimes they are going to be greater than it, sometimes smaller, and in a very few cases, equal to sample mean.
+
+We, therefore, would like to know how precise our estimate is, how close it is to the population value. So we add to the point estimate a measure of precision of it. There are different ways of computing this degree of precision (or uncertainty):
+
+-   *standard error* (usually used for means or variances)
+
+-   *margin of error* (usually used for proportions)
+
+-   *confidence interval* (used by both: means, variances and proportions).
+
+All of them are related, so if you know one of them you can easily obtain the other two. 
+
+note that we use the term *error* to measure the degree of precision/uncertainty in or estimates.
+
+
+One of the interesting characteristics of the three precision/uncertainty measures above is that they depend on the sample size *n*. Specifically, they are a function of *1/sqrt(n)* where *n* is the sample size. Therefore, the larger the sample size, the more reduced will the uncertainty measures of the estimates be. However, the gain in precision is big when we increase a small sample by one unit, but this gain will decrease as the sample size increases. 
+
+The figure below shows how the standard error (SE) of the mean varies with the sample size for the sample of results obtained by rolling a dice *n* times. For very small sample sizes, an increment of the sample size implies a sizable decrease in the SE of the mean, whereas, as the sample size grows, the decrease in the SE of the mean for one extra element in the sample tends to zero.   
+
+```{r, echo=FALSE}
+readRDS("Data/stderr.vs.ssPlot.RDS") %>% print()
+```
+
+Since the precision of our estimate depends on the sample size, it can be established at design stage, before we collect the data provided that we have some prior information. 
+
+It is important to realise that we do not have to take repeated samples in order to estimate the standard error, there is sufficient information within a single sample. 
+
+An interesting result of this is that the sample size depends on the precision you would like to achieve (or that the precision of your estimates will depend on the sample size), but it does not depend on the population size, provided that your population is large enough. The sample size is a figure, not a percentage!!
+For small populations, and small here means up to some hundreds, a correction applies, so we won't get sample sizes greater than the population size!
+
+
+### Confidence Interval
+
+*A confidence interval gives an indication of the degree of uncertainty of an estimate and helps to decide how precise a sample estimate is*. It specifies a range of values likely to contain the unknown population value. These values are defined by lower and upper limits, and the probability that the Confidence Interval includes the true population value is given by the confidence level.
+
+The width of the interval depends on the actual precision of the estimate and the confidence level used. A greater standard error will result in a wider interval; and the wider the interval, the less precise the estimate will be.
+
+A 95% confidence level is by far the most commonly used. However, it is possible to calculate the CI at any given level of confidence, such as 90% or 99%. But why 95%? It was set by the father of modern statistics himself, Sir Ronald Fisher. In 1925, Fisher picked 95% because the distance from the center of the Confidence Interval and the upper or lower limit is almost 2 times (1.96 times, to be precise) the standard error of the estimate. 
+
+It is a good compromise between being almost sure (95%) that it includes the population value, and not being so extremely wide that it wouldn't be useful for estimation purposes.
+
+For a confidence level of 95%, if we drew 20 random samples and calculated a 95% confidence interval for the mean for each sample using the data in that sample, we would expect that, on average, 19 out of the 20 (95%) resulting confidence intervals would contain the true (and unknown) population value and 1 in 20 (5%) would not. So, most of the time, but not always. If we increased the confidence level to 99%, wider intervals would be obtained to increase the probability to include the true value, and only one out of 100 times we will get a confidence interval does not include the true value.
+
+
+For the purposes of this demonstration we are going to use two examples of the Humpback Whale data set.
+The number of Humpback whales in the data set is 23581, large enough to assume that the characteristics of interest in the population of Humpback whales (length and sex) are basically these in the sample.
+
+Let's have a look at the data
+
+```{r, echo = FALSE}
+DT::datatable(Whale)
+```
+
+
+
+the table below summarises the length of the whales
+
+```{r sum_table, echo = FALSE}
+
+  gt::gt(table_stat) %>%
+  gt::fmt_number(columns = 2)
+  
+```
+
+Take a look at graphical display of the length in the interactive plot below
+
+```{r v1_ui, context="render",echo=FALSE}
+
+  selectInput("plot_type",label = "Type of Visualisation",
+              choices =choices)
+  plotlyOutput("plot1")
+
+```
+
+
+```{r v1_server,context="server"}
+  output$plot1 <- renderPlotly({
+    
+    if(input$plot_type=="boxplot"){
+      outs1<-quantile(Whale$length.m.,c(0.25,0.75))+c(-1,1)*diff(quantile(Whale$length.m.,c(0.25,0.75)))*1.5
+      outs<-Whale %>%
+        filter(length.m.<outs1[1] | length.m.>outs1[2])
+    } 
+    
+(ggplot(Whale)+
+    {if(input$plot_type=="histogram")geom_histogram(aes(x=length.m.))}+
+    {if(input$plot_type=="boxplot")geom_boxplot(aes(y=length.m.))}+
+      {if(input$plot_type=="density")geom_density(aes(x=length.m.))}+
+    {if((input$plot_type=="density"|input$plot_type=="histogram")) labs(x="Length (m)") }+
+    {if((input$plot_type=="boxplot")) labs(y="Length (m)") }+
+    plot_theme+
+    ggtitle(paste(names(choices)[choices==input$plot_type]," - Length (m)")))  %>% 
+      ggplotly()
+})
+    
+```
+
+
+
+Let's assume that the 23550 whales reported in the dataset are the population of whales in the Australian shores, and let's see what happens if we takes samples from it and observe how the sample mean of the length and the proportion of male/female, the estimate for the population mean and the proportion of male/female, behave as we obtain a new sample. The sampling method used is Simple Random sampling, each unit has exactly the same probability to be selected.
+
+
+```{r sample_ui, context="render",echo=FALSE}
+
+  sliderInput("n_sample",label = "Sample Size",min = 5,max=500,value = 50,step = 5)
+ sliderInput("conf_level",label = "Confidence Level",min = 0.5,max=0.999,value = 0.95,step = 0.001)
+  actionButton("go2","Make New Sample!")
+  selectInput("type",label="Plot Type",choices = c("violin","errorbar"))
+  gt_output("table1")
+    plotOutput("ci_plot")
+
+```
+
+
+```{r, sample_server,context="server"}
+
+ whale_sample<-reactiveValues(sample=NULL)
+
+whale_summary<-Whale %>%
+  summarise("Mean Length"=mean(length.m.),"SD Length"=sd(length.m.),"SE Length"=sd(length.m.)/sqrt(n()),
+            "% Male"=scales::percent(mean(sex=="Male"),0.1)) %>%
+  mutate(Sample="Complete Data")
+
+
+  observeEvent(input$go2,{
+ whale_sample$sample<-slice_sample(Whale,n = as.numeric(input$n_sample),replace=FALSE)
+ whale_sample$label<-as.numeric(input$n_sample)
+  })
+
+output$table1<-render_gt({
+ if(!is.null(whale_sample$sample)){
+
+  (whale_sample$sample %>%
+  summarise("Mean Length"=mean(length.m.),"SD Length"=sd(length.m.),"SE Length"=sd(length.m.)/sqrt(n()),
+            "% Male"=scales::percent(mean(sex=="Male"),0.1)) %>%
+  mutate(Sample=paste0("Random Sample (n=", whale_sample$label,")"))) %>%
+     full_join(whale_summary) %>%
+     gt() %>%
+     fmt_number()
+
+   
+   
+}
+})
+
+
+output$ci_plot<-renderPlot({
+ if(!is.null(whale_sample$sample)){
+
+   if(input$type=="violin"){
+ p1<- whale_sample$sample %>%
+  summarise("Mean"=mean(length.m.),"SD"=sd(length.m.),"SE"=sd(length.m.)/sqrt(n())) %>%
+     ggplot(aes(x=1,y=Mean,ymax=Mean+qnorm(1-((1-as.numeric(input$conf_level))/2))*SE,
+                ymin=Mean-qnorm(1-((1-as.numeric(input$conf_level))/2))*SE))+
+       geom_violin(data=whale_sample$sample,aes(x=1,y=length.m.),inherit.aes=FALSE)+
+         geom_point()+
+     geom_errorbar(width=0.05)+
+     geom_violin(data=Whale,aes(y=length.m.,x=2),inherit.aes=FALSE,col="red")+
+          annotate(geom="point",y=mean(Whale$length.m.),x=2, size=4,col="red")+
+     scale_y_continuous(limits=c(5,20))+
+       scale_x_continuous(breaks=1:2,labels=c("Sample","Data"))+
+          ggtitle(paste0(whale_sample$label," samples\n",scales::percent(input$conf_level,0.1)," Confidence Level"))+
+    theme(axis.text = element_text(size=16),title=element_text(size=20))
+   }
+     if(input$type=="errorbar"){
+   whale_sample$sample %>%
+  summarise("Mean"=mean(length.m.),"SD"=sd(length.m.),"SE"=sd(length.m.)/sqrt(n())) ->plt_dt
+       
+       p1<-  ggplot(plt_dt,aes(x=1,y=Mean,ymax=Mean+qnorm(1-((1-as.numeric(input$conf_level))/2))*SE,
+                ymin=Mean-qnorm(1-((1-as.numeric(input$conf_level))/2))*SE))+
+         geom_point()+
+     geom_errorbar(width=0.05)+
+     scale_y_continuous(limits=c(min(c(plt_dt$Mean-qnorm(1-((1-as.numeric(input$conf_level))/2))*plt_dt$SE,10)),
+                                 max(c(plt_dt$Mean+qnorm(1-((1-as.numeric(input$conf_level))/2))*plt_dt$SE,17))))+
+          annotate(geom="point",y=mean(Whale$length.m.),x=2, size=4,col="red")+
+          scale_x_continuous(breaks=1:2,labels=c("Sample","Data"))+
+          ggtitle(paste0(whale_sample$label," samples\n",scales::percent(input$conf_level,0.1)," Confidence Level"))+
+    theme(axis.text = element_text(size=16),title=element_text(size=20))
+     }
+   p1
+ }
+})
+
+```
+
+You can also change the sample size. By increasing it, the sample estimates will be closer and closer to the actual population value. The 95% confidence interval changes the centre (because it is the sample mean), but the width change is very small.
+
+You can also change the confidence level. If you increase it from 95% to, say, 99%, you will observe how the confidence interval gets wider, and if you set the confidence level at 90%, the confidence interval will get narrower.
+
+
+Now, let's observe what happens with the 95% Confidence intervals. You can generate, by a Simple Random Sampling process, samples of size *n* from the population of whales. For each sample, the 95% Confidence interval will be generate and, until you reset, the confidence intervals are accumulated in the plot.
+
+
+```{r sample_ui2, context="render",echo=FALSE}
+
+  sliderInput("n_sample2",label = "Sample Size",min = 5,max=500,value = 50,step = 5)
+ sliderInput("conf_level2",label = "Confidence Level",min = 0.5,max=0.999,value = 0.95,step = 0.001)
+  actionButton("add","Add New Sample!")
+    actionButton("reset","Reset")
+ 
+    plotOutput("cumulative_ci_plot")
+
+```
+
+
+```{r, sample_server2,context="server"}
+
+ whale_sample2<-reactiveValues(sample=list())
+
+observeEvent(input$reset,{
+  whale_sample2$sample<-list()
+})
+
+whale_summary2<-Whale %>%
+  summarise("Mean"=mean(length.m.))
+
+
+  observeEvent(input$add,{
+ whale_sample2$sample<-append(whale_sample2$sample,
+                             list(sample(1:nrow(Whale),size =  as.numeric(input$n_sample2),replace=FALSE)))
+  })
+
+output$cumulative_ci_plot<-renderPlot({
+  
+  p1<-ggplot(whale_summary2)+
+    geom_hline(aes(yintercept=Mean),col="blue")
+  
+ if(length(whale_sample2$sample)>0){
+
+   
+   whale_sample2$sample %>%
+     map_df(function(x)slice(Whale,x) %>% summarise(mean=mean(length.m.),n=n(),se=sd(length.m.)/sqrt(n()))) %>%
+     mutate(sample=1:n())%>%
+     mutate(colour=!(((mean + qnorm(1-((1-as.numeric(input$conf_level2))/2))*se)<whale_summary2$Mean) |
+                       ((mean - qnorm(1-((1-as.numeric(input$conf_level2))/2))*se)>whale_summary2$Mean)) )->samples
+     
+   p1<-p1+
+     geom_point(data=samples,
+                   aes(y=mean,x=sample,colour=colour))+
+     geom_errorbar(data=samples,
+                   aes(y=mean,x=sample,ymax=mean+qnorm(1-((1-as.numeric(input$conf_level2))/2))*se,
+                       ymin=mean-qnorm(1-((1-as.numeric(input$conf_level2))/2))*se,colour=colour),inherit.aes = FALSE)+
+     scale_y_continuous(limits=c(min(samples$mean)-3.5*max(samples$se),
+                                 max(samples$mean)+3.5*max(samples$se)))+
+     scale_color_manual(values=c("FALSE"="red","TRUE"="black"))+
+     ggtitle("95% Confidence Intervals")+
+     theme_light()+
+     labs(colour="Includes true value?")
+   
+ }
+  print(p1)
+   
+ 
+})
+
+```
+
+As the sample size grows, again, the 95% confidence interval will get narrower. 
+For example, if you generate a sample of size n=50 and generate the 95% Confidence interval and then generate a new sample of size n=4*50=200, the width of the new sample 95% Confidence interval will be a half of the first one, as the with of the Confidence interval is proportional to 1/sqrt(n).
+
+95% of the 95% Confidence intervals, or 19 out of 20, should include the population mean, that is represented by the horizontal line in the plot. If you keep generating samples and their corresponding 95% CI long enough, you will find that one Confidence Interval does not include the population mean. to identify it easily it is red instead of the usual black. This is a probabilistic statement, so it may happen in your first sample or may not happen until you have generated 30 samples, but in the long run, the proportion of 95% confidence intervals that do not include the population mean will be around 5% or one out of 20. And this will happen no matter how large is your sample size. Sample size affects the precision of the estimate, the width of the 95% confidence interval, but, by its definition, the 95% Confidence interval will contain the true population value for 95% of the random samples.
+
+Let's suppose we selected a sample of n=400, the mean of the length was 13.25m, and the 95% Confidence interval [13.106;13.394]. The true average length value, that will usually be unknown, is 13.30m, which is included in the confidence interval. however there are lots of other values, infinite to be precise, that are included in the confidence interval. According to our sample and the confidence interval  we obtained from it, the mean population length of the Humpback whales could be 13.11m, or 13.21m, or 13.31m or any other value within the interval limits. 
+And there is still a small chance, 5%, that the true population mean length is outside the limits, either way. 
+
+What if we generated the 99% confidence interval instead from the same sample? the 99% CI is [13.061;13.439]. Now, there is just 1% probability that the true value lies beyond the CI limits, but this has a cost, the 99% CI is wider than the 95% CI. 
+
+
