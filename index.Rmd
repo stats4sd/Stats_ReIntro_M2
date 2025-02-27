@@ -76,10 +76,11 @@ In this session we will cover:
 
 In these workbook, all output produced will come from the use of R, and all of the code used can be found on GitHub here: <https://github.com/stats4sd/Stats_ReIntro_M2>. However, the principles are identical regardless of which data analysis tool is being used. Whichever tool is being used for data analysis - it will require that the user is familiar enough with it to be able to generate any sort of summary and compute precision measures such as a confidence interval!
 
-## Data being used in this workbook
-In this session we are going to use a public dataset produced by the Ocean Biodiversity Information system (OBIS). It contains the Historic whale catch records from Australian whaling stations (1925-1978). The full data set and other details can be found here <https://obis.org/dataset/43e4c2cc-5886-427f-a4a9-d47d2635d246>. It contains 38267 records, but we will use a subset: the data corresponding to the most common caught whale, the Humpback (Megaptera novaeangliae), that contains 23581 records. 
 
-We have also edited it to include only the columns we are interested in. Below you can explore the the data we are going to use in this workbook.
+## Data used in this workbook
+In this session we are going to use a public dataset produced by the Ocean Biodiversity Information system (OBIS). It contains the Historic whale catch records from Australian whaling stations (1925-1978). The full data set and other details can be found here <https://obis.org/dataset/43e4c2cc-5886-427f-a4a9-d47d2635d246>. It contains 38267 records, but we will use a subset: the data corresponding to the most commonly caught whale, the Humpback (Megaptera novaeangliae), that contains 23581 records. 
+
+We have also edited it to include only the columns we are interested in. Below, you can explore the data we are going to use in this workbook.
 
 ```{r, echo=FALSE}
 DT::datatable(Whale)
@@ -88,39 +89,37 @@ DT::datatable(Whale)
 
 ## Population and Sample
 
-In statistics the term “population” has a slightly different meaning from the one given to it in ordinary speech. It need not refer only to people or to animate creatures – the population of Britain, for instance or the dog population of London. Statisticians also speak of a population of objects, or events, or procedures, or observations, including such things as the quantity of lead in urine, amount of heavy metals in liver tissue of wild salmon, or area burnt in wild fires. A population is thus an aggregate of creatures, things, cases and so on.
+In statistics, the term “population” has a slightly different meaning from the one given to it in ordinary speech. It does not necessarily refer only to people or animate creatures—such as the population of Britain, for instance, or the dog population of London. Statisticians also speak of a population of objects, events, procedures, or observations, including such things as the quantity of lead in urine, the amount of heavy metals in the liver tissue of wild salmon, or the area burned in wildfires. A population is thus an aggregate of creatures, things, cases, and so on.
 
-we call *Population* the entire group of individuals to which findings of the study are to be extrapolated. 
-The individual members of the population whose characteristics are to be measured are the *units* of the population.
-The units can be, basically, anything: people, individual birds of a given species, ground plots, plants, individuals of an animal species, households, hospitals, schools or business. Examples of characteristics that we can measure in populations are the proportion of male/female, or the proportion of given subspecies (proportion of Humpback whales among the population of whales), or the average height or diameter in trees or the average length of the population of Humpback whales.
+we call *Population* the entire group of individuals to which the findings of the study are to be extrapolated. The individual members of the population whose characteristics are to be measured are the *units* of the population. The units can be, essentially, anything: people, individual birds of a given species, ground plots, plants, individuals of an animal species, households, hospitals, schools, or businesses. Examples of characteristics that we can measure in populations include the proportion of males/females, the proportion of a given subspecies (e.g., the proportion of Humpback whales among the population of whales), or the average height or diameter of trees, or the average length of the population of Humpback whales.
 
-The population must be fully defined so that those to be included and excluded are clearly spelt out (inclusion and exclusion criteria). There is, however, a trade-off between stricter conditions for inclusion – which may reduce variability in the population but decrease the generalisability of the results. For example, we can define our population of whales as all whales in the world, or just Humpback whales, or female Humpback whales, or female Humpback whales in the Australia shores, or ... We can define a population as the trees of a given species in a single area of a forest, or in the whole forest, or across a region of a country, or in the whole country, or .... The less strict the inclusion criteria, the larger the variability in the population, the stricter the criteria, the more homogeneous the populaton will be, but also the smaller the population we can make generalisations from our sample. 
+The population must be fully defined so that those to be included and excluded are clearly spelt out (inclusion and exclusion criteria). There is, however, a trade-off between stricter conditions for inclusion – which may reduce variability in the population but decrease the generalisability of the results. For example, we can define our population of whales as all whales in the world, or just Humpback whales, or female Humpback whales, or female Humpback whales along the shores of Australia, or ... We can define a population as the trees of a given species in a single area of a forest, or in the whole forest, or across a region of a country, or in the whole country, or .... The less strict the inclusion criteria, the larger the variability in the population; the stricter the criteria, the more homogeneous the population will be, but also the smaller the population from which we can make generalisations based on our sample. 
 
-Although a researcher should clearly define the population he or she is dealing with, they may not be able to enumerate it exactly. For instance, in ordinary usage the population of England denotes the number of people within England’s boundaries, perhaps as enumerated at a census. But people die and are born continuously, some people may leave the country whereas others may come from abroad to live in. Defining the population is not always straightforward.
+Although a researcher should clearly define the population he or she is dealing with, they may not be able to enumerate it exactly. For instance, in ordinary usage, the population of England denotes the number of people within England’s boundaries, perhaps as enumerated in a census. But people die and are born continuously; some people may leave the country, whereas others may come from abroad to live in it. Defining the population is not always straightforward.
 
 ### Sample
 
-Although we would like to know the value of certain characteristics of the population, we can't measure all the units, because of time and budget constrains, but also because sometimes the process of measurement affects, even kills or destroys, the unit, and therefore we are not supposed to do this for the whole population. Think of the lichen example above, if we collected all the lichen in an area and dry it, we would have none left! Or if we wanted to study the lead content in the liver of salmon, we will have to kill all the salmon to obtain the results!
+Although we would like to know the value of certain characteristics of the population, we can't measure all the units due to time and budget constraints, but also because sometimes the process of measurement affects, or even kills or destroys, the unit. Therefore, we are not supposed to do this for the whole population. Think of the lichen example above: if we collected all the lichen in an area and dried it, we would have none left! Or if we wanted to study the lead content in the liver of salmon, we would have to kill all the salmon to obtain the results!
 
-Therefore, we usually select a subset (the *Sample*) from the original population and observe/measure all the units in it, and use this to get an *Estimate* of the population value or answer questions about the population value. A well chosen sample will contain most of the information about a particular population characteristic. 
+Therefore, we usually select a subset (the *Sample*) from the original population and observe/measure all the units in it, and use this to get an *Estimate* of the population value or answer questions about the population value. A well-chosen sample will contain most of the information about a particular population characteristic. 
 
 ### Sampling Units
 
-With many populations, it is straightforward to identify the types of units to be sampled and conceive a list or *frame* of the units in the population, regardless the practical problems of obtaining the frame or observing the selected sample. A complete list of the units in the target population would provide and ideal frame from which the sample units could be selected. The Humpback whale dataset is this sampling frame, as it contains the list of all possible whales we will consider in our study. 
+With many populations, it is straightforward to identify the types of units to be sampled and conceive a list or *frame* of the units in the population, regardless the practical problems of obtaining the frame or observing the selected sample. A complete list of the units in the target population would provide an ideal frame from which the sample units could be selected. The Humpback whale dataset is this sampling frame, as it contains the list of all possible whales we will consider in our study. 
 In practice, it is often difficult to obtain a list that corresponds exactly to the population of interest.
 
 With many other populations, it is not so clear what the units should be. For example, in a survey of a natural resource or agricultural crop in a region, the region may be divided into a set of geographic units ("plots" or "segments") and a sample of units may be selected using a map. However, one is free to choose alternative sizes and shapes of units, and such choices may affect the cost of the survey and the precision of the estimates.
 
-The image below is is a close-up of the sample tube on the ground corresponding to the seventh sample collected by the NASA’s Perseverance Rover in Mars. Perseverance has been taking duplicate samples from each rock target the mission selects. The rover currently has all 18 samples taken so far in its belly, including one atmospheric sample. A key objective for Perseverance’s mission on Mars is astrobiology, including the search for signs of ancient microbial life. The rover will characterize the planet’s geology and past climate, pave the way for human exploration of the Red Planet, and be the first mission to collect and cache Martian rock and regolith (broken rock and dust).
+The image below is a close-up of the sample tube on the ground corresponding to the seventh sample collected by the NASA's Perseverance Rover in Mars. Perseverance has been taking duplicate samples from each rock target the mission selects. The rover currently has all 18 samples taken so far in its belly, including one atmospheric sample. A key objective for Perseverance’s mission on Mars is astrobiology, including the search for signs of ancient microbial life. The rover will characterise the planet’s geology and past climate, pave the way for human exploration of the Red Planet, and be the first mission to collect and cache Martian rock and regolith (broken rock and dust).
 <https://science.nasa.gov/mission/mars-2020-perseverance/>
 
 ![12th Perseverance Rock Sample Bearwallow on Three Forks Sample Depot:https://commons.wikimedia.org/wiki/File:12th_Perseverance_Rock_Sample_Bearwallow_on_Three_Forks_Sample_Depot.png](https://upload.wikimedia.org/wikipedia/commons/4/47/12th_Perseverance_Rock_Sample_Bearwallow_on_Three_Forks_Sample_Depot.png)
 
 Let's try to identify the key concepts in this process:
 
--   The population is the area in Mars explored by the rover
+-   The population is the area on Mars explored by the rover
 
--   The unit is the the content of Martian rock and regolith in a single tube collected by the rover 
+-   The unit is the content of Martian rock and regolith in a single tube collected by the rover 
 
 -   The sample contains 18 units 
 
