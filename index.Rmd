@@ -652,14 +652,45 @@ As the sample size grows, again, the 95% confidence interval will get narrower. 
 
 95% of the 95% Confidence intervals, or 19 out of 20, should include the population mean, that is represented by the horizontal line in the plot. If you keep generating samples and their corresponding 95% CI long enough, you will find that one Confidence Interval does not include the population mean. To identify it easily it is red instead of the usual black. This is a probabilistic statement, so it may happen in your first sample or may not happen until you have generated 30 samples, but in the long run, the proportion of 95% confidence intervals that do not include the population mean will be around 5% or one out of 20. And this will happen no matter how large your sample size is. Sample size affects the precision of the estimate, the width of the 95% confidence interval, but, by its definition, the 95% Confidence interval will contain the true population value for 95% of the random samples.
 
-Let's suppose we selected a sample of n=400, the mean length is 13.25m, and the 95% Confidence interval [13.106;13.394]. The true average length value, that will usually be unknown, is 13.30m, which is included in the confidence interval. However, there are lots of other values, infinite to be precise, that are included in the confidence interval. According to our sample and the confidence interval  we obtained from it, the mean population length of the Humpback whales could be 13.11m, or 13.21m, or 13.31m or any other value within the interval limits. And there is still a small chance, 5%, that the true population mean length is outside the limits, either way. 
-What if we generated the 99% confidence interval instead from the same sample? the 99% CI would be [13.061;13.439]. Now, there is just 1% probability that the true value lies beyond the CI limits, but this comes at a cost: the 99% CI is wider than the 95% CI. 
+Let's suppose we selected a sample of n=400, the mean length is 13.39m, and the 95% Confidence interval [13.257;13.534]. The true average length value, that will usually be unknown, is 13.30m, which is included in the confidence interval. However, there are lots of other values, infinite to be precise, that are included in the confidence interval. According to our sample and the confidence interval  we obtained from it, the mean population length of the Humpback whales could be 13.27m, or 13.41m, or 13.50m or any other value within the interval limits. And there is still a small chance, 5%, that the true population mean length is outside the limits, either way. 
+What if we generated the 99% confidence interval instead from the same sample? the 99% CI would be [13.213;13.578]. Now, there is just 1% probability that the true value lies beyond the CI limits, but this comes at a cost: the 99% CI is wider than the 95% CI. 
 
 The confidence interval and the confidence levels are both related to the *p-value* that we are going to present in Workbook 3.
 
+
+
+### Bootstrap Confidence Interval
+
+The computation of the 95% Confidence Interval as we have seen it comes from the fact that the mean of a sufficiently large sample size (a sample size of *n* greater than 5 could be sufficient) is *normally distributed*, according to the *Central Limit Theorem*. The previous statement also holds for proportions, although larger sample sizes may be required. 
+
+There is a range of methods that do not require normality and can work in any circumstances. These methods are based on *resampling*: the creation of new samples based on one observed sample. One such method is *bootstrapping*.
+
+The bootstrap creates multiple resamples (with replacement) from a single set of observations and obtains the (bootstrap) sampling distribution of the characteristic of interest in the population (e.g., mean, proportion, etc.). It is, in a way, the equivalent of taking many different samples and observing how the characteristic of interest is distributed. Hence the name of *bootstrap*, the magical idea of pulling oneself up by one's own bootstraps.
+
+Let's go back to the whale dataset. We have a sample of 400 whales obtained by Simple Random Sampling. We can then resample n=200 units from it *with replacement*, meaning that we can have the same whale more than once in the first resample. We then compute the estimate of interest: the mean, or the proportion of males. We then repeat the process a second time and obtain a second estimate, and then a third, and so on, up to a large number of resamples, for example, 5000. These 5000 resample means (or proportions) can be plotted in a histogram, and we can also get the two values that include the central 95% of the resample estimates, leaving the 2.5% most extreme on both sides out. This is the  95% bootstrap Confidence Interval.
+
+The figure below shows the 95% Bootstrap Confidence Interval for the population mean whale length. 
+
+```{r, out.width="80%", echo = FALSE}
+img <- readPNG("img/BootstrapCI.png")
+grid.raster(img)
+```
+
+The 95% Bootstrap CI computed with the original sample of n=400 is [13.201; 13.587], while the 95% CI computed using the normal distribution is [13.257;13.534], and the original sample mean is 13.396. We could also compute the 99% bootstrap CI by leaving out the most extreme 0.5% of observations on both sides: [13.213; 13.578], or a Confidence Interval for any other confidence level.
+
+Both 95% CIs —the classical one that uses the normal distribution and the bootstrap CI,
+
+-   contain the true population value of 13.289, 
+
+-   were obtained from the original sample of n=400
+
+The advantage of using a Bootstrap Confidence Interval is that there is no need to assume that our observations, or the underlying populations, are normally distributed. It can always be used, even if our data is normally distributed.
+
+
+
 ## Sampling strategies in environmental sciences
 
-In this section, we are going to explore some of the common sampling methods in environmental sciences.
+In this section, we are going to explore some of the common sampling methods in environmental sciences. The following video will also take you through some of the most relevant features of the methods described below.
 
 ![](https://www.youtube.com/watch?v=UDB5Uon7ZYg)
 
@@ -846,26 +877,30 @@ The table above shows some results looking at the the percentage of male whales 
 ```{r q1, echo = FALSE}
   question("60% of whales within our population are male",
     answer("True",message = "We could say either '60% of wales within our sample are male' or 'the estimated percentage of male whales in our population is 60%'. But unless we conducted a census we do not know exactly the percentage of male whales in the whole population, so we cannot claim this statement to be true."),
-    answer("False", correct = TRUE,message = "We could say either '60% of wales within our sample are male' or 'the estimated percentage of male whales in our population is 60%'. But unless we conducted a census we do not know exactly the percentage of male whales in the whole population, so we cannot claim this statement to be true."))
+    answer("False", correct = TRUE,message = "We could say either '60% of wales within our sample are male' or 'the estimated percentage of male whales in our population is 60%'. But unless we conducted a census we do not know exactly the percentage of male whales in the whole population, so we cannot claim this statement to be true."),
+    random_answer_order = FALSE, allow_retry=TRUE)
 ```
 
 ```{r q2, echo = FALSE}
   question("Using the same sample, a 99% Confidence Interval would be narrower than the 95% Confidence Interval",
     answer("True",message = "With the same sample, the 99% CI is always wider than the 95% CI, as you in order to be 'more confident' that your CI includes the true value of the population, you need to include a wider range of values"),
-    answer("False", correct = TRUE,message = "With the same sample, the 99% CI is always wider than the 95% CI, as you in order to be 'more confident' that your CI includes the true value of the population, you need to include a wider range of values"))
+    answer("False", correct = TRUE,message = "With the same sample, the 99% CI is always wider than the 95% CI, as you in order to be 'more confident' that your CI includes the true value of the population, you need to include a wider range of values"),
+    random_answer_order = FALSE, allow_retry=TRUE)
 ```
 
 
 ```{r q3, echo = FALSE}
   question("There is a chance that the proportion of male whales is either less than 55% or more than 65%",
     answer("True", correct = TRUE,message = "If it is a truly random sample then the chance of obtaining a 95% CI that does not contain the true population value would be 5%"),
-    answer("False",message = "If it is a truly random sample then the chance of obtaining a 95% CI that does not contain the true population value would be 5%"))
+    answer("False",message = "If it is a truly random sample then the chance of obtaining a 95% CI that does not contain the true population value would be 5%"),
+    random_answer_order = FALSE, allow_retry=TRUE)
 ```
 
 ```{r q4, echo = FALSE}
   question("The width of the Confidence Interval is a measure of the precision of my estimate",
     answer("True", correct = TRUE,message = "Confidence intervals are a measure of precision; not of variability or bias"),
-    answer("False",message = "Confidence intervals are a measure of precision; not of variability or bias"))
+    answer("False",message = "Confidence intervals are a measure of precision; not of variability or bias"),
+    random_answer_order = FALSE, allow_retry=TRUE)
 ```
 
 
@@ -879,19 +914,21 @@ The table above shows some results looking at the the percentage of male whales 
     answer("Whether the sample is representative of the population", correct = FALSE,message = "A non-representative sample will introduce bias into the estimate, but will not impact upon the precision\n"),
     answer("The number of different variables being collected", correct = FALSE,message = "The number of variables collected will not have an impact on the confidence interval\n"),
         answer("Whether the variable is normally distributed", correct = FALSE,message = "Under the central limit theorem then the distribution of the underlying variable does not matter, only the variance. When distributions are extremely skewed the mean may not be the most relevant estimate of central tendency, but it will always  be possible to calculate values for the mean and associated confidence intervals.\n"),
-    answer("The measurement error in the tools used to collect data", correct = FALSE,message = "Confidence intervals are only able to account for sampling error, not measurement error\n"),random_answer_order = TRUE, allow_retry=TRUE)
+    answer("The measurement error in the tools used to collect data", correct = FALSE,message = "Confidence intervals are only able to account for sampling error, not measurement error\n"),
+    random_answer_order = TRUE, allow_retry=TRUE)
 ```
 
 ### Question 3
 A research study will assess the impacts of environmental contamination (heavy metals, POPs…etc) on wildlife along the Kobuk river system, Alaska. The study will involve environmental sampling of the system, as well as wildlife sampling of species thought to be affected, especially salmon. The researcher will then be looking for links between pollutants and effects on wildlife health and on the ecosystem. 
+
 ```{r q6, echo = FALSE}
-question("Answer the following questions regarding the sampling process you would use",
+question("Select all the correct statements regarding the sampling process you would use",
          answer("It will be more efficient, in terms of costs and time, to divide the basin into clusters, for example, each tributary would be one cluster and random sample clusters and then random sample within selected clusters to obtain the catchment sites", correct = TRUE, message ="It is usually more cost- and time-efficient to use a clustered design\n"),
          answer("Cluster sampling is more time and cost efficient than Simple Random Sampling", correct = TRUE, message = "Stratified sampling subdivides the population into homogeneous subgroups and uses a probabilistic sampling method to sample within each stratum\n"),
          answer("Random sampling strategies without stratification may produce clusters of sites in parts of the country and leave some areas unsampled.", correct = TRUE,message = "If we don't want this to happen, we should divide the river basin in strata\n"),
          answer("We will obtain more precise estimates for a given total sample size if we sample in fewer places and measure more salmon than if we sample in more places and measure fewer salmon", correct = FALSE,message = "the design effect (DEFF) is the inflation of the standard error of the estimate when we use a probabilistic sampling method other than Simple Random Sampling. the DEFF is smaller if we sample in more places and take fewer measurements in each place than the opposite, because in the same place units tend to be more similar (so smaller variability) than for the overall population\n"),
          answer("Stratification can be performed according to a geographical area (e.g. squares or catchment boundaries), a river type or stream orders.  It all depends on your specific reasons for introducing a stratum into your sample. ", correct = TRUE, message = "All these, and possibly others, are possible strata\n"),
-         random_answer_order = FALSE, allow_retry=TRUE)
+         random_answer_order = TRUE, allow_retry=TRUE)
 ```
 
 
