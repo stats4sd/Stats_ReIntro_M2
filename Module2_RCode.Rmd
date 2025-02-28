@@ -1,0 +1,263 @@
+---
+title: "Module2_RCode"
+output: word_document
+date: "2025-02-28"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r setup, include=FALSE}
+
+#install.packages(c("tidyverse","waffle","treemap","Hmisc","psych","agricolae","janitor","gridExtra"))
+
+library(tidyverse)
+library(waffle)
+library(treemap)
+library(Hmisc)
+library(psych)
+library(agricolae)
+library(janitor)
+library(gridExtra)
+library(plotly)
+```
+
+## Get data
+
+```{r}
+Whale<-read.csv("Data/Humpback.csv") %>% filter(length.m.>0)
+Whale$sex<-factor(Whale$sex, levels = c("Male", "Female", "Hermaphrodite", "Unknown"))
+
+head(Whale, 15)
+```
+
+## Whale length summaries
+```{r}
+Whale %>%
+  ungroup() %>%
+      summarise("Number of whales"=n(),
+                "Mean length"=mean(length.m.)%>%round(1),
+                "Median length"=median(length.m.)%>%round(1),
+                "Minimum"=min(length.m.)%>%round(1),
+                "Maximum"=max(length.m.)%>%round(1),
+                "Range"=(max(length.m.)-min(length.m.))%>%round(1),
+                "Standard Deviation"=sd(length.m.)%>%round(1),
+                "Variance"=var(length.m.)%>%round(),
+                )%>%
+  gather(Statistic,Value) ->table_stat
+
+table_stat
+```
+
+## Rolling one fair dice n times
+```{r}
+n <- 100
+dice.sample<-data.frame(roll=sample(1:6, size= n, replace=TRUE))
+
+## mean
+mean(dice.sample$roll)
+
+## distribution
+ggplot(dice.sample, aes(x=roll))+ 
+  geom_bar()+
+  ggtitle(paste("Mean Value =",mean(dice.sample$roll)))+
+   scale_x_continuous(labels=1:6,breaks=1:6,limits=c(0.5,6.5))+
+ stat_count(geom = "label", colour = "black", size = 6,
+aes(label = paste(after_stat(count),"\n",
+                  scales::percent(after_stat(count)/nrow(dice.sample$roll),0.1))),position=position_stack(vjust=0.5))+
+    theme(axis.text = element_text(size=16),title=element_text(size=20))+
+     xlab("Dice Value")+
+     ylab("Number of times value rolled")
+```
+
+## Rolling one fair dice n times
+```{r}
+n=100
+
+probs<-rep(1,6)
+    
+d1<-data.frame(type=input,roll=sample(1:6, size= n,
+                                    prob= probs, replace=TRUE)) %>%
+     group_by(type) %>%
+      summarise(mean=mean(roll),n=n(),sixes=mean(roll==6))
+
+
+p1<-ggplot( d1,aes(x=mean,y=sixes,fill=n,shape=type))+
+annotate(geom="point",x=3.5,y=1/6,col="red",size=10)+
+  annotate(geom="point",x=3.5,y=1/6,col="red",size=30,shape=1)+
+    annotate(geom="point",x=3.5,y=1/6,col="red",size=60,shape=1)+
+    annotate(geom="point",x=3.5,y=1/6,col="red",size=100,shape=1)+
+  geom_point(size=5)+
+  scale_y_continuous(limits=c(0,0.5),labels=scales::percent)+
+  scale_x_continuous(limits=c(2,5))+
+  scale_fill_distiller(palette="Spectral",limits=c(1,1000))+
+  theme_light()+
+  scale_shape_manual(values=c(21,23))+
+    theme(axis.text = element_text(size=16),title=element_text(size=20))+
+  labs(x="Mean Score",y="% Sixes",shape="Dice",fill="Number of Rolls")
+p1
+```
+
+## Rolling one Unfair dice n times
+```{r}
+n=100
+
+probs<-c(1,1,1,0,1,2)
+
+d2<-data.frame(type=input,roll=sample(1:6, size= n,
+                                    prob= probs, replace=TRUE)) %>%
+     group_by(type) %>%
+      summarise(mean=mean(roll),n=n(),sixes=mean(roll==6))
+
+
+p2<-ggplot(d2,aes(x=mean,y=sixes,fill=n,shape=type))+
+annotate(geom="point",x=3.5,y=1/6,col="red",size=10)+
+  annotate(geom="point",x=3.5,y=1/6,col="red",size=30,shape=1)+
+    annotate(geom="point",x=3.5,y=1/6,col="red",size=60,shape=1)+
+    annotate(geom="point",x=3.5,y=1/6,col="red",size=100,shape=1)+
+  geom_point(size=5)+
+  scale_y_continuous(limits=c(0,0.5),labels=scales::percent)+
+  scale_x_continuous(limits=c(2,5))+
+  scale_fill_distiller(palette="Spectral",limits=c(1,1000))+
+  theme_light()+
+  scale_shape_manual(values=c(21,23))+
+    theme(axis.text = element_text(size=16),title=element_text(size=20))+
+  labs(x="Mean Score",y="% Sixes",shape="Dice",fill="Number of Rolls")
+p2
+```
+
+## Standard error vs Sample size
+```{r}
+
+a<-c(1,2,3,4,5,6)
+sda<-sd(a)
+
+standard_error<-c() 
+sample_size<-c()
+
+for(n in 2:1000) {
+  roll=sample(1:6, size= n,prob= probs, replace=TRUE)
+  standard_error <- c(standard_error,sda/sqrt(n))
+  sample_size <- c(sample_size,n)
+}
+
+simulation <- data.frame(standard_error,sample_size)
+
+ggplot(simulation,aes(x=sample_size, y=standard_error))+
+  geom_line()
+```
+
+## summary of whale data (sex)
+```{r whale_sex_table,echo=FALSE}
+Whale %>%
+  group_by(sex) %>%
+    summarise("Number"= n(), 
+              "Percentage" = scales::percent(n()/nrow(Whale),0.1)) %>%
+  gt::gt()
+```
+
+## Summary of whale data (length)
+```{r}
+gt::gt(table_stat)
+```
+
+## Boxplot of length
+```{r}
+boxplot.plot<- ggplot(Whale,aes(y=length.m.))+
+  geom_boxplot()
+
+boxplot.plot
+```
+
+## Histogram of length
+```{r}
+histo.plot<- ggplot(Whale,aes(x=length.m.))+
+  geom_histogram()
+
+histo.plot
+```
+
+## Density plot of length
+```{r}
+density.plot<- ggplot(Whale,aes(x=length.m.))+
+  geom_density()
+
+density.plot
+```
+
+
+## 95% CI for length
+```{r}
+##define confidence level
+conf_level2 <- 0.95
+
+##define sample size
+n=100
+
+whale_summary2<-Whale %>%
+  summarise("Mean"=mean(length.m.))
+
+whale_sample2<-list(sample=list())
+whale_sample2$sample<-append(whale_sample2$sample,
+                             list(sample(1:nrow(Whale),size =  n,replace=FALSE)))
+
+p1<-ggplot(whale_summary2)+
+    geom_hline(aes(yintercept=Mean),col="blue")+
+     xlab("Sample Number")+ylab("Length (m)")+
+     labs(colour="Includes true population mean?")
+
+
+whale_sample2$sample %>%
+     map_df(function(x)slice(Whale,x) %>% 
+            summarise(mean=mean(length.m.),n=n(),se=sd(length.m.)/sqrt(n()))) %>%
+     mutate(sample=1:n())%>%
+     mutate(colour=!(((mean + qnorm(1-((1-as.numeric(conf_level2))/2))*se)<whale_summary2$Mean) |
+                       ((mean - qnorm(1-((1-as.numeric(conf_level2))/2))*se)>whale_summary2$Mean)) )->samples
+     
+   p1<-p1+
+     geom_point(data=samples,
+                   aes(y=mean,x=sample))+
+     geom_errorbar(data=samples,
+                   aes(y=mean,x=sample,ymax=mean+qnorm(1-((1-as.numeric(conf_level2))/2))*se,
+                       ymin=mean-qnorm(1-((1-as.numeric(conf_level2))/2))*se,colour=colour),inherit.aes = FALSE)+
+     scale_y_continuous(limits=c(min(samples$mean)-3.5*max(samples$se),
+                                 max(samples$mean)+3.5*max(samples$se)))+
+     scale_color_manual(values=c("FALSE"="red","TRUE"="black"))+
+     ggtitle("95% Confidence Intervals")+
+     xlab("Sample Number")+ylab("Length (m)")+
+     labs(colour="Includes true population mean?")
+   
+p1   
+
+```
+
+
+## Bootsrap 95% CI
+```{r}
+Mostra_Orig<-sample(Whale$length.m.,400, replace = FALSE) 
+
+t.test(Mostra_Orig)
+
+mostra_bootstrap<-c()
+
+for (i in 1:5000){
+  mostrai<-sample(Mostra_Orig,200, replace = TRUE)
+  meani<-mean(mostrai)
+  mostra_bootstrap<-c(mostra_bootstrap,meani)
+}
+
+## 95% Bootstrap CI
+quantile(mostra_bootstrap,probs=c(0.025, 0.975))
+
+## Plot
+boot_mostra<-data.frame(mostra_bootstrap)
+
+ggplot(boot_mostra, aes(x=mostra_bootstrap))+
+  geom_histogram()+
+  labs(x="resample mean")+
+  geom_vline(xintercept = quantile(mostra_bootstrap,probs=c(0.025, 0.975)), linetype=2,colour = "red")
+  
+
+
+```
